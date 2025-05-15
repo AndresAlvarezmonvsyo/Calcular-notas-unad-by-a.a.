@@ -2,9 +2,9 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="author" content="Yakeline Caicedo Ramírez">
+    <meta name="author" content="Julian Andres Alvarez">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <title>Calculadora Premium UNAD</title>
+    <title>Calculadora Premium</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -67,7 +67,7 @@ body {
 }
 
 .logo img {
-    height: 50px;
+    height: 70px;
     margin-right: 15px;
     filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
 }
@@ -78,14 +78,21 @@ body {
 }
 
 .logo-text span:first-child {
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 700;
     line-height: 1;
 }
 
 .logo-text span:last-child {
-    font-size: 12px;
+    font-size: 14px;
     opacity: 0.8;
+}
+
+.student-note {
+    font-size: 12px;
+    margin-top: 5px;
+    color: rgba(255,255,255,0.8);
+    font-style: italic;
 }
 
 .theme-switch {
@@ -155,7 +162,6 @@ input:checked + .slider:before {
     animation: fadeIn 0.5s ease;
 }
 
-/* MODIFICACIÓN PRINCIPAL (900px DE ANCHO) */
 .calculator-card {
     background: white;
     border-radius: 15px;
@@ -164,7 +170,7 @@ input:checked + .slider:before {
     margin: 0 auto 30px;
     transition: var(--transition);
     width: 100%;
-    max-width: 94000px; /* Cambiado a 900px exactos */
+    max-width: 900px;
 }
 
 .calculator-card:hover {
@@ -196,11 +202,10 @@ input:checked + .slider:before {
     padding: 30px;
 }
 
-/* AJUSTE DEL GRID PARA 900px */
 .calculator-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 40px; /* Espacio ligeramente reducido para 900px */
+    gap: 40px;
 }
 
 .input-group {
@@ -761,6 +766,122 @@ input:checked + .slider:before {
     color: var(--secondary-color);
 }
 
+.history-container {
+    margin-top: 40px;
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: var(--shadow);
+}
+
+.history-title {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+}
+
+.history-title i {
+    margin-right: 10px;
+    color: var(--secondary-color);
+}
+
+.history-list {
+    margin-top: 20px;
+}
+
+.history-item {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: var(--transition);
+}
+
+.history-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.history-details {
+    flex: 1;
+}
+
+.history-grade {
+    font-size: 24px;
+    font-weight: 700;
+    margin-right: 15px;
+    min-width: 60px;
+    text-align: center;
+}
+
+.history-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.history-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 5px;
+    color: var(--primary-color);
+    transition: var(--transition);
+}
+
+.history-btn:hover {
+    color: var(--secondary-color);
+    transform: scale(1.1);
+}
+
+.history-date {
+    font-size: 12px;
+    color: #666;
+    margin-top: 5px;
+}
+
+.clear-history {
+    margin-top: 20px;
+    text-align: right;
+}
+
+.clear-history-btn {
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.clear-history-btn:hover {
+    background: #c0392b;
+}
+
+.dark-mode .history-container,
+.dark-mode .history-item {
+    background-color: #252525;
+}
+
+.dark-mode .history-item {
+    background-color: #2d2d2d;
+}
+
+.dark-mode .history-date {
+    color: #aaa;
+}
+
+.dark-mode .history-btn {
+    color: var(--secondary-color);
+}
+
 @media (max-width: 768px) {
     .main-content {
         overflow-x: hidden;
@@ -829,6 +950,16 @@ input:checked + .slider:before {
     .results-container {
         margin-top: 20px;
     }
+    
+    .history-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .history-actions {
+        margin-top: 10px;
+        align-self: flex-end;
+    }
 }
 
 @media print {
@@ -844,9 +975,44 @@ input:checked + .slider:before {
         top: 0;
         width: 100%;
         box-shadow: none;
+        background: white !important;
+        color: black !important;
     }
     .bottom-nav, .floating-btns {
         display: none !important;
+    }
+    
+    /* Mejoras para impresión en móviles */
+    @page {
+        size: auto;
+        margin: 10mm;
+    }
+    
+    .calculator-card {
+        width: auto;
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+        border: none;
+    }
+    
+    .card-body {
+        padding: 10px;
+    }
+    
+    .final-grade-container {
+        margin-top: 15px;
+        padding: 15px;
+    }
+    
+    .final-grade-value {
+        font-size: 36px;
+    }
+    
+    /* Asegurar que el gráfico se imprima correctamente */
+    #gradeChart {
+        max-width: 100% !important;
+        height: auto !important;
     }
 }
 
@@ -874,9 +1040,7 @@ input:checked + .slider:before {
 .animate-pulse {
     animation: pulse 2s infinite;
 }
- 
-           
-    </style>
+</style>
 </head>
 <body>
     <!-- Barra superior -->
@@ -887,6 +1051,7 @@ input:checked + .slider:before {
                 <div class="logo-text">
                     <span>Calculadora de Calificaciones</span>
                     <span>Universidad Nacional Abierta y a Distancia</span>
+                    <span class="student-note">Desarrollado por un estudiante de Ingeniería en Sistemas como complemento a la calculadora UNAD</span>
                 </div>
             </a>
             <div class="theme-switch">
@@ -931,7 +1096,7 @@ input:checked + .slider:before {
                                         <span class="max-label">Max 125</span>
                                     </div>
                                     <div class="error-message" id="error25">¡El valor máximo es 125 puntos!</div>
-                                    <div class="hand-animation">
+                                    <div class="hand-animation" style="animation-delay: 0.5s;">
                                         <i class="fas fa-hand-point-down"></i>
                                     </div>
                                 </div>
@@ -980,6 +1145,37 @@ input:checked + .slider:before {
                             </div>
                             <canvas id="gradeChart"></canvas>
                         </div>
+                        
+                        <!-- Botones de acción -->
+                        <div style="display: flex; justify-content: center; gap: 15px; margin-top: 30px;">
+                            <button id="saveToHistory" style="padding: 12px 25px; background: var(--primary-color); color: white; border: none; border-radius: 8px; cursor: pointer; transition: var(--transition);">
+                                <i class="fas fa-save"></i> Guardar en historial
+                            </button>
+                            <button id="printBtn" style="padding: 12px 25px; background: var(--secondary-color); color: white; border: none; border-radius: 8px; cursor: pointer; transition: var(--transition);">
+                                <i class="fas fa-print"></i> Imprimir resultados
+                            </button>
+                            <button id="exportBtn" style="padding: 12px 25px; background: var(--primary-light); color: white; border: none; border-radius: 8px; cursor: pointer; transition: var(--transition);">
+                                <i class="fas fa-download"></i> Exportar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sección de historial -->
+                <div class="history-container">
+                    <h2 class="history-title">
+                        <i class="fas fa-history"></i> Historial de Cálculos
+                    </h2>
+                    <p>Aquí puedes ver, editar y exportar tus cálculos anteriores.</p>
+                    
+                    <div class="history-list" id="historyList">
+                        <!-- Los elementos del historial se agregarán aquí dinámicamente -->
+                    </div>
+                    
+                    <div class="clear-history">
+                        <button class="clear-history-btn" id="clearHistoryBtn">
+                            <i class="fas fa-trash"></i> Limpiar historial
+                        </button>
                     </div>
                 </div>
             </div>
@@ -991,6 +1187,11 @@ input:checked + .slider:before {
                         <i class="fas fa-info-circle"></i> Información Importante
                     </h2>
                     <div class="info-content">
+                        <h3>Acerca de esta plataforma</h3>
+                        <p>Esta calculadora fue desarrollada por un estudiante de Ingeniería en Sistemas como un complemento a la calculadora oficial de la UNAD, con el objetivo de brindar una experiencia más completa y accesible para los estudiantes.</p>
+                        
+                        <p>No pretende competir con los sistemas oficiales de la universidad, sino ser un avance hacia el futuro de herramientas educativas más intuitivas y funcionales.</p>
+                        
                         <h3>Instrucciones de uso</h3>
                         <p>Esta calculadora te permite determinar tu nota final en un curso de la UNAD basado en el sistema de evaluación que divide la calificación en dos componentes:</p>
                         
@@ -1004,6 +1205,7 @@ input:checked + .slider:before {
                             <li>Ingresa los puntos obtenidos en el componente del 75% (máximo 375 puntos)</li>
                             <li>Ingresa los puntos obtenidos en el componente del 25% (máximo 125 puntos)</li>
                             <li>La calculadora mostrará automáticamente tu nota final</li>
+                            <li>Puedes guardar tus resultados en el historial para consultarlos después</li>
                         </ol>
                         
                         <h3>Escala de calificación UNAD</h3>
@@ -1075,8 +1277,8 @@ input:checked + .slider:before {
                         <div class="guide-step">
                             <div class="step-number">4</div>
                             <div class="step-content">
-                                <h3 class="step-title">Guarda tus resultados</h3>
-                                <p>Usa los botones flotantes para exportar tu calificación como imagen o PDF.</p>
+                                <h3 class="step-title">Guarda y exporta</h3>
+                                <p>Guarda tus cálculos en el historial y exporta los resultados como imagen o PDF cuando lo necesites.</p>
                                 <div class="hand-animation" style="animation-delay: 1.5s;">
                                     <i class="fas fa-hand-point-down"></i>
                                 </div>
@@ -1159,7 +1361,8 @@ input:checked + .slider:before {
                         <i class="fas fa-calculator"></i>
                     </div>
                     <h4>Calcula tu nota final fácilmente</h4>
-                    <p>Esta herramienta te permite calcular tu calificación final basada en el sistema de evaluación de la UNAD (75% actividades + 25% examen final).</p>
+                    <p>Esta herramienta fue desarrollada por un estudiante de Ingeniería en Sistemas como complemento a la calculadora oficial de la UNAD, con el objetivo de brindar una experiencia más completa.</p>
+                    <p>No es una competencia con los sistemas oficiales, sino un avance hacia el futuro de herramientas educativas más intuitivas.</p>
                     <p>Navega entre las secciones para usar la calculadora, ver información importante o seguir la guía paso a paso.</p>
                     
                     <div class="dont-show-again">
@@ -1265,6 +1468,19 @@ input:checked + .slider:before {
             $('.puntos-input').on('input', function() {
                 calculateGrades();
             });
+            
+            // Botones de acción
+            $('#saveToHistory').click(saveToHistory);
+            $('#printBtn').click(printResults);
+            $('#exportBtn').click(function() {
+                $('#exportModal').addClass('show');
+            });
+            
+            // Botones de historial
+            $('#clearHistoryBtn').click(clearHistory);
+            
+            // Cargar historial al iniciar
+            loadHistory();
             
             // Inicializar cálculo
             calculateGrades();
@@ -1419,19 +1635,28 @@ input:checked + .slider:before {
                 const element = $('.calculator-card')[0];
                 const fileName = `Nota_UNAD_${new Date().toISOString().slice(0,10)}`;
                 
-                // Configuración de html2canvas
+                // Configuración de html2canvas con mayor calidad
                 const options = {
-                    scale: 2,
+                    scale: 3, // Aumentar escala para mejor calidad
                     useCORS: true,
                     allowTaint: true,
-                    backgroundColor: darkMode ? '#1e1e1e' : '#ffffff'
+                    backgroundColor: darkMode ? '#1e1e1e' : '#ffffff',
+                    logging: false,
+                    letterRendering: true,
+                    quality: 1 // Máxima calidad
                 };
                 
+                // Mostrar mensaje de procesamiento
+                const processingMessage = $('<div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.8); color: white; padding: 20px; border-radius: 10px; z-index: 9999;">Procesando exportación, por favor espera...</div>');
+                $('body').append(processingMessage);
+                
                 html2canvas(element, options).then(canvas => {
+                    processingMessage.remove();
+                    
                     if (format === 'pdf') {
                         const { jsPDF } = window.jspdf;
                         const pdf = new jsPDF('p', 'mm', 'a4');
-                        const imgData = canvas.toDataURL('image/png');
+                        const imgData = canvas.toDataURL('image/png', 1.0); // Máxima calidad
                         const pdfWidth = pdf.internal.pageSize.getWidth();
                         const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
                         
@@ -1440,80 +1665,289 @@ input:checked + .slider:before {
                     } else {
                         const link = document.createElement('a');
                         link.download = `${fileName}.${format}`;
-                        link.href = canvas.toDataURL(`image/${format}`);
+                        link.href = canvas.toDataURL(`image/${format}`, 1.0); // Máxima calidad
                         link.click();
                     }
                     
                     $('#exportModal').removeClass('show');
+                }).catch(err => {
+                    processingMessage.remove();
+                    alert('Error al exportar: ' + err.message);
                 });
             }
             
-   function printResults() {
-    const chartCanvas = document.getElementById('gradeChart');
-
-    // Esperar un pequeño delay para asegurar que el gráfico esté renderizado
-    setTimeout(() => {
-        const chartImage = chartCanvas.toDataURL(); // captura como imagen
-
-        const finalGrade = $('#finalGrade').text();
-        const message = $('#gradeMessage').text();
-
-        const printWindow = window.open('', '', 'height=600,width=800');
-        printWindow.document.write(`
-            <html>
-            <head>
-                <title>Imprimir Nota Final</title>
-                <style>
-                    body {
-                        font-family: 'Segoe UI', sans-serif;
-                        text-align: center;
-                        padding: 40px;
-                        background: #f9f9f9;
-                        color: #222;
+            // Función mejorada para imprimir resultados
+            function printResults() {
+                // Crear un clon del elemento para imprimir
+                const printContent = $('.calculator-card').clone();
+                
+                // Ajustar estilos para impresión
+                printContent.css({
+                    'width': '100%',
+                    'max-width': '100%',
+                    'margin': '0',
+                    'box-shadow': 'none',
+                    'border': 'none'
+                });
+                
+                // Ocultar botones en la impresión
+                printContent.find('#saveToHistory, #printBtn, #exportBtn').hide();
+                
+                // Crear ventana de impresión
+                const printWindow = window.open('', '', 'width=800,height=600');
+                printWindow.document.open();
+                printWindow.document.write(`
+                    <html>
+                    <head>
+                        <title>Imprimir Nota Final</title>
+                        <style>
+                            @media print {
+                                body {
+                                    font-family: 'Poppins', sans-serif;
+                                    background: white;
+                                    color: black;
+                                    padding: 20px;
+                                }
+                                .calculator-card {
+                                    width: 100% !important;
+                                    max-width: 100% !important;
+                                    margin: 0 !important;
+                                    box-shadow: none !important;
+                                    border: none !important;
+                                }
+                                .card-body {
+                                    padding: 10px !important;
+                                }
+                                .final-grade-container {
+                                    margin-top: 15px !important;
+                                    padding: 15px !important;
+                                }
+                                .final-grade-value {
+                                    font-size: 36px !important;
+                                }
+                                #gradeChart {
+                                    max-width: 100% !important;
+                                    height: auto !important;
+                                }
+                                button {
+                                    display: none !important;
+                                }
+                            }
+                            @page {
+                                size: auto;
+                                margin: 10mm;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        ${printContent.html()}
+                        <script src="https://cdn.jsdelivr.net/npm/chart.js"><\/script>
+                        <script>
+                            // Recrear el gráfico en la ventana de impresión
+                            window.onload = function() {
+                                const ctx = document.getElementById('gradeChart').getContext('2d');
+                                new Chart(ctx, {
+                                    type: 'doughnut',
+                                    data: ${JSON.stringify(gradeChart.data)},
+                                    options: {
+                                        responsive: true,
+                                        plugins: {
+                                            legend: {
+                                                position: 'bottom'
+                                            }
+                                        },
+                                        cutout: '70%'
+                                    }
+                                });
+                                
+                                // Imprimir y cerrar después de un breve retraso
+                                setTimeout(() => {
+                                    window.print();
+                                    setTimeout(() => window.close(), 500);
+                                }, 500);
+                            };
+                        <\/script>
+                    </body>
+                    </html>
+                `);
+                printWindow.document.close();
+            }
+            
+            // Funciones para el historial
+            function saveToHistory() {
+                const p75 = parseFloat($('#p75').val()) || 0;
+                const p25 = parseFloat($('#p25').val()) || 0;
+                const finalGrade = $('#finalGrade').text();
+                
+                if (p75 === 0 && p25 === 0) {
+                    alert('No hay datos para guardar. Ingresa tus puntos primero.');
+                    return;
+                }
+                
+                const historyItem = {
+                    p75: p75,
+                    p25: p25,
+                    finalGrade: finalGrade,
+                    date: new Date().toLocaleString()
+                };
+                
+                let history = JSON.parse(localStorage.getItem('gradeHistory') || '[]');
+                history.unshift(historyItem); // Agregar al principio
+                
+                // Limitar a 50 elementos
+                if (history.length > 50) {
+                    history = history.slice(0, 50);
+                }
+                
+                localStorage.setItem('gradeHistory', JSON.stringify(history));
+                loadHistory();
+                
+                // Mostrar feedback
+                alert('¡Cálculo guardado en el historial!');
+            }
+            
+            function loadHistory() {
+                const history = JSON.parse(localStorage.getItem('gradeHistory') || '[]');
+                const historyList = $('#historyList');
+                historyList.empty();
+                
+                if (history.length === 0) {
+                    historyList.html('<p style="text-align: center; color: #666;">No hay cálculos guardados</p>');
+                    return;
+                }
+                
+                history.forEach((item, index) => {
+                    const historyItem = $(`
+                        <div class="history-item">
+                            <div class="history-details">
+                                <div><strong>75%:</strong> ${item.p75} pts | <strong>25%:</strong> ${item.p25} pts</div>
+                                <div class="history-date">${item.date}</div>
+                            </div>
+                            <div class="history-grade">${item.finalGrade}</div>
+                            <div class="history-actions">
+                                <button class="history-btn edit-history" data-index="${index}" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="history-btn export-history" data-index="${index}" title="Exportar">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="history-btn delete-history" data-index="${index}" title="Eliminar">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `);
+                    
+                    historyList.append(historyItem);
+                });
+                
+                // Asignar eventos a los botones del historial
+                $('.edit-history').click(function() {
+                    const index = $(this).data('index');
+                    const history = JSON.parse(localStorage.getItem('gradeHistory') || '[]');
+                    const item = history[index];
+                    
+                    $('#p75').val(item.p75);
+                    $('#p25').val(item.p25);
+                    calculateGrades();
+                    
+                    // Ir a la pestaña de calculadora
+                    $('.nav-item').removeClass('active');
+                    $('[data-tab="calculadora-tab"]').addClass('active');
+                    $('.content-tab').removeClass('active');
+                    $('#calculadora-tab').addClass('active');
+                });
+                
+                $('.export-history').click(function() {
+                    const index = $(this).data('index');
+                    const history = JSON.parse(localStorage.getItem('gradeHistory') || '[]');
+                    const item = history[index];
+                    
+                    // Crear un elemento temporal para exportar
+                    const tempElement = $(`
+                        <div class="calculator-card" style="margin: 20px;">
+                            <div class="card-header">
+                                <h2><i class="fas fa-calculator"></i> Historial de Cálculo</h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="results-container">
+                                    <div class="result-item">
+                                        <span class="result-label">Puntos 75%:</span>
+                                        <span class="result-value">${item.p75}</span>
+                                    </div>
+                                    <div class="result-item">
+                                        <span class="result-label">Puntos 25%:</span>
+                                        <span class="result-value">${item.p25}</span>
+                                    </div>
+                                    <div class="result-item">
+                                        <span class="result-label">Nota final:</span>
+                                        <span class="result-value">${item.finalGrade}</span>
+                                    </div>
+                                </div>
+                                <div class="final-grade-container">
+                                    <h3 class="final-grade-title">NOTA GUARDADA</h3>
+                                    <div class="final-grade-value">${item.finalGrade}</div>
+                                    <p class="final-grade-message">Guardado el ${item.date}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+                    
+                    // Agregar al body temporalmente
+                    $('body').append(tempElement);
+                    
+                    // Exportar como PDF con alta calidad
+                    const options = {
+                        scale: 3, // Mayor escala para mejor calidad
+                        useCORS: true,
+                        allowTaint: true,
+                        backgroundColor: darkMode ? '#1e1e1e' : '#ffffff',
+                        quality: 1 // Máxima calidad
+                    };
+                    
+                    // Mostrar mensaje de procesamiento
+                    const processingMessage = $('<div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.8); color: white; padding: 20px; border-radius: 10px; z-index: 9999;">Preparando exportación...</div>');
+                    $('body').append(processingMessage);
+                    
+                    html2canvas(tempElement[0], options).then(canvas => {
+                        processingMessage.remove();
+                        const { jsPDF } = window.jspdf;
+                        const pdf = new jsPDF('p', 'mm', 'a4');
+                        const imgData = canvas.toDataURL('image/png', 1.0);
+                        const pdfWidth = pdf.internal.pageSize.getWidth();
+                        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+                        
+                        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                        pdf.save(`Nota_UNAD_Historial_${index}.pdf`);
+                        
+                        // Eliminar el elemento temporal
+                        tempElement.remove();
+                    }).catch(err => {
+                        processingMessage.remove();
+                        alert('Error al exportar: ' + err.message);
+                        tempElement.remove();
+                    });
+                });
+                
+                $('.delete-history').click(function() {
+                    if (confirm('¿Estás seguro de que quieres eliminar este cálculo del historial?')) {
+                        const index = $(this).data('index');
+                        let history = JSON.parse(localStorage.getItem('gradeHistory') || '[]');
+                        
+                        history.splice(index, 1);
+                        localStorage.setItem('gradeHistory', JSON.stringify(history));
+                        loadHistory();
                     }
-                    h1 {
-                        font-size: 26px;
-                        margin-bottom: 10px;
-                        color: #0b4237;
-                    }
-                    .grade-value {
-                        font-size: 60px;
-                        font-weight: bold;
-                        color: #0d5a4c;
-                        margin-bottom: 15px;
-                    }
-                    .grade-message {
-                        font-size: 18px;
-                        margin-bottom: 30px;
-                    }
-                    .chart {
-                        margin: auto;
-                        width: 400px;
-                        max-width: 90%;
-                        border-top: 1px solid #ccc;
-                        padding-top: 20px;
-                    }
-                </style>
-            </head>
-            <body>
-                <h1>Tu Nota Final</h1>
-                <div class="grade-value">${finalGrade}</div>
-                <div class="grade-message">${message}</div>
-                <div class="chart">
-                    <img src="${chartImage}" style="width: 100%;" />
-                </div>
-            </body>
-            </html>
-        `);
-        printWindow.document.close();
-        printWindow.focus();
-        printWindow.print();
-        printWindow.close();
-    }, 300); // espera 300ms para asegurar que el gráfico esté listo
-}
-
-
- 
+                });
+            }
+            
+            function clearHistory() {
+                if (confirm('¿Estás seguro de que quieres borrar todo el historial? Esta acción no se puede deshacer.')) {
+                    localStorage.removeItem('gradeHistory');
+                    loadHistory();
+                }
+            }
+            
             // Funciones para modo oscuro
             function enableDarkMode() {
                 $('body').addClass('dark-mode');
