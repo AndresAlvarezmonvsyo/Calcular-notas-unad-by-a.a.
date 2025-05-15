@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -1518,820 +1519,802 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
-        $(document).ready(function() {
-            // Inicializar variables
-            let gradeChart = null;
-            let darkMode = false;
-            let touchStartX = 0;
-            let touchEndX = 0;
-            
-            // Mostrar modal de bienvenida si no está marcado para no mostrar
-            if (!localStorage.getItem('dontShowWelcome')) {
-                setTimeout(() => {
-                    $('#welcomeModal').addClass('show');
-                }, 500);
-            }
-            
-            // Función para cerrar el modal de bienvenida
-            window.closeWelcomeModal = function() {
-                if ($('#dontShowAgain').is(':checked')) {
-                    localStorage.setItem('dontShowWelcome', 'true');
-                }
-                $('#welcomeModal').removeClass('show');
-            };
-            
-            // Configurar tema inicial
-            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                enableDarkMode();
-            }
-            
-            // Cambiar tema
-            $('#themeToggle').change(function() {
-                if ($(this).is(':checked')) {
-                    enableDarkMode();
-                } else {
-                    disableDarkMode();
-                }
-            });
-            
-            // Botón flotante para cambiar tema
-            $('#floatingThemeBtn').click(function() {
-                $('#themeToggle').click();
-            });
-            
-            // Navegación por pestañas
-            $('[data-tab]').click(function(e) {
-                e.preventDefault();
-                const tabId = $(this).data('tab');
-                
-                // Actualizar navegación
-                $('.nav-item').removeClass('active');
-                $(this).addClass('active');
-                
-                // Ocultar todas las pestañas
-                $('.content-tab').removeClass('active');
-                
-                // Mostrar pestaña correspondiente
-                $(`#${tabId}`).addClass('active');
-                
-                // Redibujar el gráfico si es necesario
-                if (tabId === 'calculadora-tab' && gradeChart) {
-                    gradeChart.update();
-                }
-            });
-            
-            // Botones flotantes
-            $('#floatingExportBtn').click(function() {
-                $('#exportModal').addClass('show');
-            });
-            
-            $('#floatingPrintBtn').click(function() {
-                printResults();
-            });
-            
-            // Cerrar modales
-            $('.close-modal').click(function() {
-                $(this).closest('.modal').removeClass('show');
-            });
-            
-            // Exportar como PNG
-            $('#exportPng').click(function() {
-                exportResults('png');
-            });
-            
-            // Exportar como PDF
-            $('#exportPdf').click(function() {
-                exportResults('pdf');
-            });
-            
-            // Exportar como JPEG
-            $('#exportJpeg').click(function() {
-                exportResults('jpeg');
-            });
-            
-            // Exportar como CSV
-            $('#exportCsv').click(function() {
-                exportToCsv();
-            });
-            
-            // Calcular notas al cambiar valores
-            $('.puntos-input').on('input', function() {
-                calculateGrades();
-            });
-            
-            // Botones de acción
-            $('#saveToHistory').click(saveToHistory);
-            $('#printBtn').click(printResults);
-            $('#exportBtn').click(function() {
-                $('#exportModal').addClass('show');
-            });
-            
-            // Botones de historial
-            $('#clearHistoryBtn').click(clearHistory);
-            
-            // Personalización de colores
-            $('.color-option').click(function() {
-                const newColor = $(this).data('color');
-                changePrimaryColor(newColor);
-                $('.color-option').removeClass('selected');
-                $(this).addClass('selected');
-            });
-            
-            $('#resetColors').click(function() {
-                changePrimaryColor('#0b4237');
-                $('.color-option').removeClass('selected');
-                $('.color-option:first').addClass('selected');
-            });
-            
-            // Cargar historial al iniciar
-            loadHistory();
-            
-            // Inicializar cálculo
-            calculateGrades();
-            
-            // Función para cambiar el color principal
-            function changePrimaryColor(newColor) {
-                // Calcular color más claro para el gradiente
-                const lighterColor = lightenColor(newColor, 20);
-                
-                // Actualizar variables CSS
-                $('body').css('--primary-color', newColor);
-                $('body').css('--primary-light', lighterColor);
-                
-                // Guardar preferencia
-                localStorage.setItem('primaryColor', newColor);
-                localStorage.setItem('primaryLight', lighterColor);
-                
-                // Redibujar gráfico si existe
-                if (gradeChart) {
-                    gradeChart.update();
-                }
-            }
-            
-            // Función para aclarar un color
-            function lightenColor(color, percent) {
-                const num = parseInt(color.replace("#", ""), 16);
-                const amt = Math.round(2.55 * percent);
-                const R = (num >> 16) + amt;
-                const G = (num >> 8 & 0x00FF) + amt;
-                const B = (num & 0x0000FF) + amt;
-                
-                return "#" + (
-                    0x1000000 +
-                    (R < 255 ? (R < 1 ? 0 : R) : 255) * 0x10000 +
-                    (G < 255 ? (G < 1 ? 0 : G) : 255) * 0x100 +
-                    (B < 255 ? (B < 1 ? 0 : B) : 255)
-                ).toString(16).slice(1);
-            }
-            
-            // Función para calcular notas
-            function calculateGrades() {
-                // Obtener valores
-                const p75 = parseFloat($('#p75').val()) || 0;
-                const p25 = parseFloat($('#p25').val()) || 0;
-                
-                // Validar
-                const error75 = p75 > 375;
-                const error25 = p25 > 125;
-                
-                $('#error75').toggle(error75);
-                $('#error25').toggle(error25);
-                
-                // Calcular notas
-                const n75 = error75 ? 0 : (p75 / 75).toFixed(1);
-                const n25 = error25 ? 0 : (p25 / 25).toFixed(1);
-                const totalPoints = (error75 || error25) ? 0 : (p75 + p25);
-                const finalGrade = (error75 || error25) ? 0 : (p75 / 75 * 0.75 + p25 / 25 * 0.25).toFixed(1);
-                
-                // Actualizar UI
-                $('#n75').text(n75);
-                $('#n25').text(n25);
-                $('#n100').text(totalPoints);
-                $('#tot').text(finalGrade);
-                
-                // Actualizar nota final
-                updateFinalGrade(finalGrade, error75 || error25);
-                
-                // Actualizar progreso
-                updateProgress(p75, p25, error75, error25);
-                
-                // Actualizar gráfico
-                updateChart(n75, n25, finalGrade);
-            }
-            
-            // Función para actualizar la nota final
-            function updateFinalGrade(grade, isError) {
-                if (isError) {
-                    $('#finalGrade').text('0.0').removeClass('success warning danger animate-pulse');
-                    $('#gradeMessage').text('Corrige los valores ingresados').removeClass('success warning danger');
-                    return;
-                }
-                
-                $('#finalGrade').text(grade);
-                
-                // Estilo según la nota
-                if (grade >= 4.5) {
-                    $('#finalGrade').addClass('success').removeClass('warning danger');
-                    $('#gradeMessage').text('¡Excelente trabajo! Sigue así.').addClass('success').removeClass('warning danger');
-                } else if (grade >= 3.5) {
-                    $('#finalGrade').addClass('warning').removeClass('success danger');
-                    $('#gradeMessage').text('Buen resultado. Puedes mejorar.').addClass('warning').removeClass('success danger');
-                } else if (grade >= 3.0) {
-                    $('#finalGrade').addClass('danger').removeClass('success warning');
-                    $('#gradeMessage').text('Aprobado, pero considera reforzar tus conocimientos.').addClass('danger').removeClass('success warning');
-                } else {
-                    $('#finalGrade').addClass('danger animate-pulse').removeClass('success warning');
-                    $('#gradeMessage').text('Necesitas mejorar tu desempeño.').addClass('danger').removeClass('success warning');
-                }
-            }
-            
-            // Función para actualizar la barra de progreso
-            function updateProgress(p75, p25, error75, error25) {
-                const maxPossible = 500;
-                const currentTotal = (error75 ? 0 : p75) + (error25 ? 0 : p25);
-                const progressPercent = Math.min(100, (currentTotal / maxPossible) * 100);
-                
-                $('#progressPercentage').text(Math.round(progressPercent) + '%');
-                $('#progressBar').css('width', progressPercent + '%');
-                
-                // Cambiar color según progreso
-                if (progressPercent >= 90) {
-                    $('#progressBar').css('background', `linear-gradient(90deg, var(--primary-color), var(--success-color))`);
-                } else if (progressPercent >= 70) {
-                    $('#progressBar').css('background', `linear-gradient(90deg, var(--primary-color), var(--secondary-color))`);
-                } else {
-                    $('#progressBar').css('background', `linear-gradient(90deg, var(--primary-color), var(--accent-color))`);
-                }
-            }
-            
-            // Función para actualizar el gráfico
-            function updateChart(n75, n25, finalGrade) {
-                const ctx = document.getElementById('gradeChart').getContext('2d');
-                
-                // Destruir gráfico anterior si existe
-                if (gradeChart) {
-                    gradeChart.destroy();
-                }
-                
-                // Crear nuevo gráfico
-                gradeChart = new Chart(ctx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['75% del curso', '25% del curso'],
-                        datasets: [{
-                            data: [n75 * 0.75, n25 * 0.25],
-                            backgroundColor: [
-                                'rgba(11, 66, 55, 0.8)',
-                                'rgba(245, 166, 35, 0.8)'
-                            ],
-                            borderColor: [
-                                'rgba(11, 66, 55, 1)',
-                                'rgba(245, 166, 35, 1)'
-                            ],
-                            borderWidth: 1
-                        }]
+     $(document).ready(function() {
+    // Variables globales
+    let gradeChart = null;
+    let darkMode = false;
+    let touchStartX = 0;
+    let touchEndY = 0;
+    let currentCalculationId = null;
+    
+    // Mostrar modal de bienvenida si no está marcado para no mostrar
+    if (!localStorage.getItem('dontShowWelcome')) {
+        setTimeout(() => {
+            $('#welcomeModal').addClass('show');
+        }, 500);
+    }
+    
+    // Función para cerrar el modal de bienvenida
+    window.closeWelcomeModal = function() {
+        if ($('#dontShowAgain').is(':checked')) {
+            localStorage.setItem('dontShowWelcome', 'true');
+        }
+        $('#welcomeModal').removeClass('show');
+    };
+    
+    // Configurar tema inicial
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        enableDarkMode();
+    }
+    
+    // Event listeners
+    $('#themeToggle').change(function() {
+        $(this).is(':checked') ? enableDarkMode() : disableDarkMode();
+    });
+    
+    $('#floatingThemeBtn').click(() => $('#themeToggle').click());
+    $('#floatingExportBtn').click(() => $('#exportModal').addClass('show'));
+    $('#floatingPrintBtn').click(printResults);
+    $('.close-modal').click(function() { $(this).closest('.modal').removeClass('show'); });
+    
+    // Botones de exportación
+    $('#exportPng').click(() => exportResults('png'));
+    $('#exportPdf').click(() => exportResults('pdf'));
+    $('#exportJpeg').click(() => exportResults('jpeg'));
+    $('#exportCsv').click(exportToCsv);
+    
+    // Navegación por pestañas
+    $('[data-tab]').click(function(e) {
+        e.preventDefault();
+        const tabId = $(this).data('tab');
+        
+        $('.nav-item').removeClass('active');
+        $(this).addClass('active');
+        $('.content-tab').removeClass('active');
+        $(`#${tabId}`).addClass('active');
+        
+        if (tabId === 'calculadora-tab' && gradeChart) {
+            gradeChart.update();
+        }
+    });
+    
+    // Inputs y cálculos
+    $('.puntos-input').on('input', calculateGrades);
+    $('#saveToHistory').click(saveToHistory);
+    $('#printBtn').click(printResults);
+    $('#exportBtn').click(() => $('#exportModal').addClass('show'));
+    $('#clearHistoryBtn').click(clearHistory);
+    
+    // Personalización de colores
+    $('.color-option').click(function() {
+        const newColor = $(this).data('color');
+        changePrimaryColor(newColor);
+        $('.color-option').removeClass('selected');
+        $(this).addClass('selected');
+    });
+    
+    $('#resetColors').click(function() {
+        changePrimaryColor('#0b4237');
+        $('.color-option').removeClass('selected');
+        $('.color-option:first').addClass('selected');
+    });
+    
+    // Nueva función: Calcular nota necesaria
+    $('#calculateRequired').click(calculateRequiredGrade);
+    
+    // Botón para copiar resultados
+    $('#copyResults').click(copyResultsToClipboard);
+    
+    // Cargar datos iniciales
+    loadHistory();
+    calculateGrades();
+    
+    // Funciones principales
+    function changePrimaryColor(newColor) {
+        const lighterColor = lightenColor(newColor, 20);
+        
+        $('body').css({
+            '--primary-color': newColor,
+            '--primary-light': lighterColor
+        });
+        
+        localStorage.setItem('primaryColor', newColor);
+        localStorage.setItem('primaryLight', lighterColor);
+        
+        if (gradeChart) gradeChart.update();
+    }
+    
+    function lightenColor(color, percent) {
+        const num = parseInt(color.replace("#", ""), 16);
+        const amt = Math.round(2.55 * percent);
+        const R = (num >> 16) + amt;
+        const G = (num >> 8 & 0x00FF) + amt;
+        const B = (num & 0x0000FF) + amt;
+        
+        return "#" + (
+            0x1000000 +
+            (R < 255 ? (R < 1 ? 0 : R) : 255) * 0x10000 +
+            (G < 255 ? (G < 1 ? 0 : G) : 255) * 0x100 +
+            (B < 255 ? (B < 1 ? 0 : B) : 255)
+        ).toString(16).slice(1);
+    }
+    
+    function calculateGrades() {
+        const p75 = parseFloat($('#p75').val()) || 0;
+        const p25 = parseFloat($('#p25').val()) || 0;
+        
+        const error75 = p75 > 375;
+        const error25 = p25 > 125;
+        
+        $('#error75').toggle(error75);
+        $('#error25').toggle(error25);
+        
+        const n75 = error75 ? 0 : (p75 / 75).toFixed(1);
+        const n25 = error25 ? 0 : (p25 / 25).toFixed(1);
+        const totalPoints = (error75 || error25) ? 0 : (p75 + p25);
+        const finalGrade = (error75 || error25) ? 0 : (p75 / 75 * 0.75 + p25 / 25 * 0.25).toFixed(1);
+        
+        $('#n75').text(n75);
+        $('#n25').text(n25);
+        $('#n100').text(totalPoints);
+        $('#tot').text(finalGrade);
+        
+        updateFinalGrade(finalGrade, error75 || error25);
+        updateProgress(p75, p25, error75, error25);
+        updateChart(n75, n25, finalGrade);
+        
+        // Generar ID único para este cálculo
+        currentCalculationId = 'calc-' + Date.now();
+    }
+    
+    function calculateRequiredGrade() {
+        const currentP75 = parseFloat($('#p75').val()) || 0;
+        const desiredGrade = parseFloat($('#desiredGrade').val()) || 0;
+        
+        if (currentP75 === 0) {
+            alert('Por favor ingresa primero tus puntos del 75%');
+            return;
+        }
+        
+        if (desiredGrade < 1 || desiredGrade > 5) {
+            alert('La nota deseada debe estar entre 1.0 y 5.0');
+            return;
+        }
+        
+        const currentGrade75 = (currentP75 / 75) * 0.75;
+        const requiredGrade25 = (desiredGrade - currentGrade75) / 0.25;
+        const requiredPoints25 = requiredGrade25 * 25;
+        
+        if (requiredPoints25 > 125) {
+            $('#requiredGradeResult').html(`
+                <div class="alert alert-danger">
+                    <strong>No es posible</strong> alcanzar ${desiredGrade} con los puntos actuales del 75%.
+                    La nota máxima posible es ${(currentGrade75 + 0.25).toFixed(1)}.
+                </div>
+            `);
+        } else if (requiredPoints25 < 0) {
+            $('#requiredGradeResult').html(`
+                <div class="alert alert-success">
+                    <strong>Ya has superado</strong> la nota deseada (${desiredGrade}).
+                    Puedes obtener 0 puntos en el 25% y aún así tendrías ${(currentGrade75).toFixed(1)}.
+                </div>
+            `);
+        } else {
+            $('#requiredGradeResult').html(`
+                <div class="alert alert-info">
+                    <strong>Necesitas:</strong><br>
+                    ${requiredPoints25.toFixed(1)} puntos en el 25% (Nota ${requiredGrade25.toFixed(1)})<br>
+                    <small>Para alcanzar ${desiredGrade} como nota final</small>
+                </div>
+            `);
+        }
+        
+        $('#requiredGradeModal').addClass('show');
+    }
+    
+    function copyResultsToClipboard() {
+        const p75 = parseFloat($('#p75').val()) || 0;
+        const p25 = parseFloat($('#p25').val()) || 0;
+        const finalGrade = $('#finalGrade').text();
+        
+        if (p75 === 0 && p25 === 0) {
+            alert('No hay resultados para copiar');
+            return;
+        }
+        
+        const textToCopy = `Resultados UNAD:
+Puntos 75%: ${p75} (Nota ${(p75/75).toFixed(1)})
+Puntos 25%: ${p25} (Nota ${(p25/25).toFixed(1)})
+Nota Final: ${finalGrade}
+Calculado el ${new Date().toLocaleDateString()}`;
+        
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            showFeedbackMessage('Resultados copiados al portapapeles', 'success');
+        }).catch(err => {
+            alert('Error al copiar: ' + err);
+        });
+    }
+    
+    function updateFinalGrade(grade, isError) {
+        if (isError) {
+            $('#finalGrade').text('0.0').removeClass('success warning danger animate-pulse');
+            $('#gradeMessage').text('Corrige los valores ingresados').removeClass('success warning danger');
+            return;
+        }
+        
+        $('#finalGrade').text(grade);
+        
+        if (grade >= 4.5) {
+            $('#finalGrade').addClass('success').removeClass('warning danger');
+            $('#gradeMessage').text('¡Excelente trabajo! Sigue así.').addClass('success').removeClass('warning danger');
+        } else if (grade >= 3.5) {
+            $('#finalGrade').addClass('warning').removeClass('success danger');
+            $('#gradeMessage').text('Buen resultado. Puedes mejorar.').addClass('warning').removeClass('success danger');
+        } else if (grade >= 3.0) {
+            $('#finalGrade').addClass('danger').removeClass('success warning');
+            $('#gradeMessage').text('Aprobado, pero considera reforzar tus conocimientos.').addClass('danger').removeClass('success warning');
+        } else {
+            $('#finalGrade').addClass('danger animate-pulse').removeClass('success warning');
+            $('#gradeMessage').text('Necesitas mejorar tu desempeño.').addClass('danger').removeClass('success warning');
+        }
+    }
+    
+    function updateProgress(p75, p25, error75, error25) {
+        const maxPossible = 500;
+        const currentTotal = (error75 ? 0 : p75) + (error25 ? 0 : p25);
+        const progressPercent = Math.min(100, (currentTotal / maxPossible) * 100);
+        
+        $('#progressPercentage').text(Math.round(progressPercent) + '%');
+        $('#progressBar').css('width', progressPercent + '%');
+        
+        if (progressPercent >= 90) {
+            $('#progressBar').css('background', `linear-gradient(90deg, var(--primary-color), var(--success-color))`);
+        } else if (progressPercent >= 70) {
+            $('#progressBar').css('background', `linear-gradient(90deg, var(--primary-color), var(--secondary-color))`);
+        } else {
+            $('#progressBar').css('background', `linear-gradient(90deg, var(--primary-color), var(--accent-color))`);
+        }
+    }
+    
+    function updateChart(n75, n25, finalGrade) {
+        const ctx = document.getElementById('gradeChart').getContext('2d');
+        
+        if (gradeChart) gradeChart.destroy();
+        
+        gradeChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['75% del curso', '25% del curso'],
+                datasets: [{
+                    data: [n75 * 0.75, n25 * 0.25],
+                    backgroundColor: [
+                        'rgba(11, 66, 55, 0.8)',
+                        'rgba(245, 166, 35, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(11, 66, 55, 1)',
+                        'rgba(245, 166, 35, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { font: { family: 'Poppins', size: 12 } }
                     },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: {
-                                    font: {
-                                        family: 'Poppins',
-                                        size: 12
-                                    }
-                                }
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        return `${context.label}: ${context.raw.toFixed(2)} (${(context.raw * 20).toFixed(1)}%)`;
-                                    }
-                                }
-                            },
-                            title: {
-                                display: true,
-                                text: `Nota Final: ${finalGrade}`,
-                                font: {
-                                    family: 'Poppins',
-                                    size: 16,
-                                    weight: 'bold'
-                                }
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.label}: ${context.raw.toFixed(2)} (${(context.raw * 20).toFixed(1)}%)`;
                             }
-                        },
-                        cutout: '70%',
-                        animation: {
-                            animateScale: true,
-                            animateRotate: true
                         }
+                    },
+                    title: {
+                        display: true,
+                        text: `Nota Final: ${finalGrade}`,
+                        font: { family: 'Poppins', size: 16, weight: 'bold' }
                     }
-                });
+                },
+                cutout: '70%',
+                animation: { animateScale: true, animateRotate: true }
             }
-            
-            // Función para exportar resultados
-            function exportResults(format) {
-                let element, fileName;
-                
-                // Determinar qué exportar según la pestaña activa
-                if ($('#historial-tab').hasClass('active')) {
-                    element = $('.history-container')[0];
-                    fileName = `Historial_Notas_UNAD_${new Date().toISOString().slice(0,10)}`;
-                } else {
-                    element = $('.calculator-card')[0];
-                    fileName = `Nota_UNAD_${new Date().toISOString().slice(0,10)}`;
-                }
-                
-                // Configuración de html2canvas con mayor calidad
-                const options = {
-                    scale: 3, // Aumentar escala para mejor calidad
-                    useCORS: true,
-                    allowTaint: true,
-                    backgroundColor: darkMode ? '#1e1e1e' : '#ffffff',
-                    logging: false,
-                    letterRendering: true,
-                    quality: 1 // Máxima calidad
-                };
-                
-                // Mostrar mensaje de procesamiento
-                const processingMessage = $('<div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.8); color: white; padding: 20px; border-radius: 10px; z-index: 9999;">Procesando exportación, por favor espera...</div>');
-                $('body').append(processingMessage);
-                
-                html2canvas(element, options).then(canvas => {
-                    processingMessage.remove();
-                    
-                    if (format === 'pdf') {
-                        const { jsPDF } = window.jspdf;
-                        const pdf = new jsPDF('p', 'mm', 'a4');
-                        const imgData = canvas.toDataURL('image/png', 1.0); // Máxima calidad
-                        const pdfWidth = pdf.internal.pageSize.getWidth();
-                        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-                        
-                        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-                        pdf.save(`${fileName}.pdf`);
-                    } else {
-                        const link = document.createElement('a');
-                        link.download = `${fileName}.${format}`;
-                        link.href = canvas.toDataURL(`image/${format}`, 1.0); // Máxima calidad
-                        link.click();
-                    }
-                    
-                    $('#exportModal').removeClass('show');
-                }).catch(err => {
-                    processingMessage.remove();
-                    alert('Error al exportar: ' + err.message);
-                });
+        });
+    }
+    
+    function exportResults(format) {
+        let element, fileName;
+        
+        if ($('#historial-tab').hasClass('active')) {
+            element = $('.history-container')[0];
+            fileName = `Historial_Notas_UNAD_${new Date().toISOString().slice(0,10)}`;
+        } else {
+            element = $('.calculator-card')[0];
+            fileName = `Nota_UNAD_${new Date().toISOString().slice(0,10)}`;
+        }
+        
+        const options = {
+            scale: 4,
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: darkMode ? '#1e1e1e' : '#ffffff',
+            logging: false,
+            letterRendering: true,
+            quality: 1,
+            dpi: 300,
+            onclone: (clonedDoc) => {
+                clonedDoc.body.style.background = darkMode ? '#1e1e1e' : '#ffffff';
+                clonedDoc.body.style.color = darkMode ? '#ffffff' : '#333333';
             }
+        };
+        
+        showProcessingMessage('Preparando exportación en alta calidad...');
+        
+        html2canvas(element, options).then(canvas => {
+            removeProcessingMessage();
             
-            // Función para exportar a CSV
-            function exportToCsv() {
-                const history = JSON.parse(localStorage.getItem('gradeHistory') || []);
-                if (history.length === 0) {
-                    alert('No hay datos en el historial para exportar');
-                    return;
-                }
-                
-                let csv = 'Fecha,Puntos 75%,Puntos 25%,Nota Final\n';
-                
-                history.forEach(item => {
-                    csv += `"${item.date}",${item.p75},${item.p25},${item.finalGrade}\n`;
+            if (format === 'pdf') {
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: [canvas.width * 0.264583, canvas.height * 0.264583]
                 });
                 
-                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                pdf.addImage(canvas, 'PNG', 0, 0, pdf.internal.pageSize.getWidth(), pdf.internal.pageSize.getHeight());
+                pdf.save(`${fileName}.pdf`);
+            } else {
                 const link = document.createElement('a');
-                const url = URL.createObjectURL(blob);
-                
-                link.setAttribute('href', url);
-                link.setAttribute('download', `Historial_Notas_UNAD_${new Date().toISOString().slice(0,10)}.csv`);
-                link.style.visibility = 'hidden';
-                
+                link.download = `${fileName}.${format}`;
+                link.href = canvas.toDataURL(`image/${format}`, 1.0);
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
-                
-                $('#exportModal').removeClass('show');
             }
             
-            // Función mejorada para imprimir resultados
-            function printResults() {
-                let printContent;
+            $('#exportModal').removeClass('show');
+        }).catch(err => {
+            removeProcessingMessage();
+            alert('Error al exportar: ' + err.message);
+        });
+    }
+    
+    function printResults() {
+        const p75 = parseFloat($('#p75').val()) || 0;
+        const p25 = parseFloat($('#p25').val()) || 0;
+        const finalGrade = $('#finalGrade').text();
+        
+        if (p75 === 0 && p25 === 0) {
+            alert('No hay datos para imprimir. Ingresa tus puntos primero.');
+            return;
+        }
+        
+        // Crear contenido optimizado para impresión
+        const printContent = $(`
+            <div id="print-container" style="width: 100%; max-width: 800px; margin: 0 auto; padding: 20px; font-family: 'Poppins', sans-serif;">
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <h1 style="color: var(--primary-color); margin-bottom: 5px;">Calculadora UNAD</h1>
+                    <p style="color: #666; font-size: 16px;">Resultados de tu cálculo</p>
+                </div>
                 
-                // Determinar qué imprimir según la pestaña activa
-                if ($('#historial-tab').hasClass('active')) {
-                    printContent = $('.history-container').clone();
-                } else {
-                    printContent = $('.calculator-card').clone();
-                }
+                <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
+                    <div style="flex: 1; text-align: center; padding: 15px; background: #f9f9f9; border-radius: 10px; margin: 0 10px;">
+                        <h3 style="margin-top: 0; color: var(--primary-color);">Puntos 75%</h3>
+                        <div style="font-size: 32px; font-weight: bold; color: var(--primary-color);">${p75}</div>
+                        <div style="font-size: 14px; color: #666;">${(p75/75).toFixed(1)} de nota</div>
+                    </div>
+                    
+                    <div style="flex: 1; text-align: center; padding: 15px; background: #f9f9f9; border-radius: 10px; margin: 0 10px;">
+                        <h3 style="margin-top: 0; color: var(--primary-color);">Puntos 25%</h3>
+                        <div style="font-size: 32px; font-weight: bold; color: var(--primary-color);">${p25}</div>
+                        <div style="font-size: 14px; color: #666;">${(p25/25).toFixed(1)} de nota</div>
+                    </div>
+                </div>
                 
-                // Ajustar estilos para impresión
-                printContent.css({
-                    'width': '100%',
-                    'max-width': '100%',
-                    'margin': '0',
-                    'box-shadow': 'none',
-                    'border': 'none'
-                });
+                <div style="text-align: center; margin: 30px 0;">
+                    <div id="print-chart-container" style="width: 300px; height: 300px; margin: 0 auto;"></div>
+                </div>
                 
-                // Ocultar botones en la impresión
-                printContent.find('button').hide();
+                <div style="text-align: center; background: var(--primary-light); padding: 20px; border-radius: 10px; margin-top: 30px;">
+                    <h2 style="margin-top: 0; color: white;">NOTA FINAL</h2>
+                    <div style="font-size: 48px; font-weight: bold; color: white;">${finalGrade}</div>
+                    <div style="font-size: 14px; color: rgba(255,255,255,0.8);">Calculado el ${new Date().toLocaleDateString()}</div>
+                </div>
                 
-                // Crear ventana de impresión
-                const printWindow = window.open('', '', 'width=800,height=600');
-                printWindow.document.open();
-                
-                let printHtml = `
-                    <html>
+                <div style="text-align: center; margin-top: 30px; font-size: 12px; color: #999;">
+                    Generado con la Calculadora UNAD
+                </div>
+            </div>
+        `);
+        
+        // Agregar al body temporalmente
+        $('body').append(printContent);
+        
+        // Crear el gráfico para impresión
+        const printCanvas = $('<canvas id="printChart" width="300" height="300"></canvas>');
+        $('#print-chart-container').append(printCanvas);
+        
+        const printCtx = printCanvas[0].getContext('2d');
+        const printChart = new Chart(printCtx, {
+            type: 'doughnut',
+            data: gradeChart.data,
+            options: {
+                responsive: false,
+                plugins: {
+                    legend: { display: true, position: 'bottom' },
+                    title: { 
+                        display: true, 
+                        text: `Nota Final: ${finalGrade}`,
+                        font: { size: 16, weight: 'bold' }
+                    }
+                },
+                cutout: '65%'
+            }
+        });
+        
+        // Esperar a que se renderice el gráfico
+        setTimeout(() => {
+            // Configurar ventana de impresión
+            const printWindow = window.open('', '_blank');
+            printWindow.document.open();
+            printWindow.document.write(`
+                <html>
                     <head>
-                        <title>${$('#historial-tab').hasClass('active') ? 'Historial de Notas' : 'Nota Final UNAD'}</title>
+                        <title>Resultados UNAD - ${finalGrade}</title>
                         <style>
-                            @media print {
-                                body {
-                                    font-family: 'Poppins', sans-serif;
-                                    background: white;
-                                    color: black;
-                                    padding: 20px;
-                                }
-                                .calculator-card, .history-container {
-                                    width: 100% !important;
-                                    max-width: 100% !important;
-                                    margin: 0 !important;
-                                    box-shadow: none !important;
-                                    border: none !important;
-                                }
-                                .card-body {
-                                    padding: 10px !important;
-                                }
-                                .final-grade-container {
-                                    margin-top: 15px !important;
-                                    padding: 15px !important;
-                                }
-                                .final-grade-value {
-                                    font-size: 36px !important;
-                                }
-                                #gradeChart {
-                                    max-width: 100% !important;
-                                    height: auto !important;
-                                }
-                                button {
-                                    display: none !important;
-                                }
-                                .history-item {
-                                    page-break-inside: avoid;
-                                }
+                            @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+                            body { 
+                                font-family: 'Poppins', sans-serif; 
+                                background: white; 
+                                color: #333; 
+                                margin: 0; 
+                                padding: 0; 
                             }
-                            @page {
-                                size: auto;
-                                margin: 10mm;
+                            @page { 
+                                size: auto; 
+                                margin: 10mm; 
+                            }
+                            @media print {
+                                .no-print { display: none !important; }
                             }
                         </style>
+                        <script src="https://cdn.jsdelivr.net/npm/chart.js"><\/script>
                     </head>
                     <body>
                         ${printContent.html()}
-                `;
-                
-                // Agregar script para el gráfico si es necesario
-                if (!$('#historial-tab').hasClass('active') && gradeChart) {
-                    printHtml += `
-                        <script src="https://cdn.jsdelivr.net/npm/chart.js"><\/script>
                         <script>
                             // Recrear el gráfico en la ventana de impresión
                             window.onload = function() {
-                                const ctx = document.getElementById('gradeChart').getContext('2d');
+                                const ctx = document.getElementById('printChart').getContext('2d');
                                 new Chart(ctx, {
                                     type: 'doughnut',
                                     data: ${JSON.stringify(gradeChart.data)},
                                     options: {
-                                        responsive: true,
+                                        responsive: false,
                                         plugins: {
-                                            legend: {
-                                                position: 'bottom'
+                                            legend: { position: 'bottom' },
+                                            title: { 
+                                                display: true, 
+                                                text: 'Nota Final: ${finalGrade}',
+                                                font: { size: 16, weight: 'bold' }
                                             }
                                         },
-                                        cutout: '70%'
+                                        cutout: '65%'
                                     }
                                 });
                                 
-                                // Imprimir y cerrar después de un breve retraso
                                 setTimeout(() => {
                                     window.print();
-                                    setTimeout(() => window.close(), 500);
+                                    setTimeout(() => window.close(), 1000);
                                 }, 500);
                             };
                         <\/script>
-                    `;
-                } else {
-                    printHtml += `
-                        <script>
-                            // Solo imprimir y cerrar
-                            window.onload = function() {
-                                setTimeout(() => {
-                                    window.print();
-                                    setTimeout(() => window.close(), 100);
-                                }, 100);
-                            };
-                        <\/script>
-                    `;
-                }
-                
-                printHtml += `
                     </body>
-                    </html>
-                `;
-                
-                printWindow.document.write(printHtml);
-                printWindow.document.close();
-            }
+                </html>
+            `);
+            printWindow.document.close();
             
-            // Funciones para el historial
-            function saveToHistory() {
-                const p75 = parseFloat($('#p75').val()) || 0;
-                const p25 = parseFloat($('#p25').val()) || 0;
-                const finalGrade = $('#finalGrade').text();
+            // Eliminar el contenido temporal
+            printContent.remove();
+        }, 500);
+    }
+    
+    function exportToCsv() {
+        const history = JSON.parse(localStorage.getItem('gradeHistory') || '[]');
+        if (history.length === 0) {
+            alert('No hay datos en el historial para exportar');
+            return;
+        }
+        
+        let csv = 'Fecha,Puntos 75%,Puntos 25%,Nota Final\n';
+        history.forEach(item => {
+            csv += `"${item.date}",${item.p75},${item.p25},${item.finalGrade}\n`;
+        });
+        
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        
+        link.setAttribute('href', url);
+        link.setAttribute('download', `Historial_Notas_UNAD_${new Date().toISOString().slice(0,10)}.csv`);
+        link.style.visibility = 'hidden';
+        
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        $('#exportModal').removeClass('show');
+    }
+    
+    function saveToHistory() {
+        const p75 = parseFloat($('#p75').val()) || 0;
+        const p25 = parseFloat($('#p25').val()) || 0;
+        const finalGrade = $('#finalGrade').text();
+        
+        if (p75 === 0 && p25 === 0) {
+            alert('No hay datos para guardar. Ingresa tus puntos primero.');
+            return;
+        }
+        
+        const historyItem = {
+            id: currentCalculationId || 'calc-' + Date.now(),
+            p75: p75,
+            p25: p25,
+            finalGrade: finalGrade,
+            date: new Date().toLocaleString()
+        };
+        
+        let history = JSON.parse(localStorage.getItem('gradeHistory') || '[]');
+        history.unshift(historyItem);
+        
+        if (history.length > 50) history = history.slice(0, 50);
+        localStorage.setItem('gradeHistory', JSON.stringify(history));
+        loadHistory();
+        
+        showFeedbackMessage('¡Cálculo guardado en el historial!', 'success');
+    }
+    
+    function loadHistory() {
+        const history = JSON.parse(localStorage.getItem('gradeHistory') || '[]');
+        const historyList = $('#historyList');
+        historyList.empty();
+        
+        if (history.length === 0) {
+            historyList.html('<p style="text-align: center; color: #666;">No hay cálculos guardados</p>');
+            return;
+        }
+        
+        history.forEach((item, index) => {
+            const historyItem = $(`
+                <div class="history-item" data-id="${item.id}">
+                    <div class="history-details">
+                        <div><strong>75%:</strong> ${item.p75} pts | <strong>25%:</strong> ${item.p25} pts</div>
+                        <div class="history-date">${item.date}</div>
+                    </div>
+                    <div class="history-grade">${item.finalGrade}</div>
+                    <div class="history-actions">
+                        <button class="history-btn edit-history" data-index="${index}" title="Editar">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="history-btn export-history" data-index="${index}" title="Exportar">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button class="history-btn delete-history" data-index="${index}" title="Eliminar">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `);
+            
+            historyList.append(historyItem);
+        });
+        
+        // Eventos del historial
+        $('.edit-history').click(function() {
+            const index = $(this).data('index');
+            const history = JSON.parse(localStorage.getItem('gradeHistory') || '[]');
+            const item = history[index];
+            
+            $('#p75').val(item.p75);
+            $('#p25').val(item.p25);
+            calculateGrades();
+            
+            $('.nav-item').removeClass('active');
+            $('[data-tab="calculadora-tab"]').addClass('active');
+            $('.content-tab').removeClass('active');
+            $('#calculadora-tab').addClass('active');
+            
+            showFeedbackMessage('Cálculo cargado', 'info');
+        });
+        
+        $('.export-history').click(function() {
+            const index = $(this).data('index');
+            const history = JSON.parse(localStorage.getItem('gradeHistory') || '[]');
+            const item = history[index];
+            
+            const tempElement = $(`
+                <div class="calculator-card" style="margin: 20px;">
+                    <div class="card-header">
+                        <h2><i class="fas fa-calculator"></i> Historial de Cálculo</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="results-container">
+                            <div class="result-item">
+                                <span class="result-label">Puntos 75%:</span>
+                                <span class="result-value">${item.p75}</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Puntos 25%:</span>
+                                <span class="result-value">${item.p25}</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Nota final:</span>
+                                <span class="result-value">${item.finalGrade}</span>
+                            </div>
+                        </div>
+                        <div class="final-grade-container">
+                            <h3 class="final-grade-title">NOTA GUARDADA</h3>
+                            <div class="final-grade-value">${item.finalGrade}</div>
+                            <p class="final-grade-message">Guardado el ${item.date}</p>
+                        </div>
+                    </div>
+                </div>
+            `);
+            
+            $('body').append(tempElement);
+            showProcessingMessage('Preparando exportación...');
+            
+            html2canvas(tempElement[0], {
+                scale: 4,
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: darkMode ? '#1e1e1e' : '#ffffff',
+                quality: 1
+            }).then(canvas => {
+                removeProcessingMessage();
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const imgData = canvas.toDataURL('image/png', 1.0);
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
                 
-                if (p75 === 0 && p25 === 0) {
-                    alert('No hay datos para guardar. Ingresa tus puntos primero.');
-                    return;
-                }
-                
-                const historyItem = {
-                    p75: p75,
-                    p25: p25,
-                    finalGrade: finalGrade,
-                    date: new Date().toLocaleString()
-                };
-                
+                pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                pdf.save(`Nota_UNAD_Historial_${index}.pdf`);
+                tempElement.remove();
+            }).catch(err => {
+                removeProcessingMessage();
+                alert('Error al exportar: ' + err.message);
+                tempElement.remove();
+            });
+        });
+        
+        $('.delete-history').click(function() {
+            if (confirm('¿Estás seguro de que quieres eliminar este cálculo del historial?')) {
+                const index = $(this).data('index');
                 let history = JSON.parse(localStorage.getItem('gradeHistory') || '[]');
-                history.unshift(historyItem); // Agregar al principio
                 
-                // Limitar a 50 elementos
-                if (history.length > 50) {
-                    history = history.slice(0, 50);
-                }
-                
+                history.splice(index, 1);
                 localStorage.setItem('gradeHistory', JSON.stringify(history));
                 loadHistory();
                 
-                // Mostrar feedback visual
-                const feedback = $(`<div style="position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: var(--success-color); color: white; padding: 10px 20px; border-radius: 5px; z-index: 1000; box-shadow: 0 3px 10px rgba(0,0,0,0.2);">¡Cálculo guardado en el historial!</div>`);
-                $('body').append(feedback);
-                
-                setTimeout(() => {
-                    feedback.fadeOut(500, () => feedback.remove());
-                }, 2000);
-            }
-            
-            function loadHistory() {
-                const history = JSON.parse(localStorage.getItem('gradeHistory') || '[]');
-                const historyList = $('#historyList');
-                historyList.empty();
-                
-                if (history.length === 0) {
-                    historyList.html('<p style="text-align: center; color: #666;">No hay cálculos guardados</p>');
-                    return;
-                }
-                
-                history.forEach((item, index) => {
-                    const historyItem = $(`
-                        <div class="history-item">
-                            <div class="history-details">
-                                <div><strong>75%:</strong> ${item.p75} pts | <strong>25%:</strong> ${item.p25} pts</div>
-                                <div class="history-date">${item.date}</div>
-                            </div>
-                            <div class="history-grade">${item.finalGrade}</div>
-                            <div class="history-actions">
-                                <button class="history-btn edit-history" data-index="${index}" title="Editar">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="history-btn export-history" data-index="${index}" title="Exportar">
-                                    <i class="fas fa-download"></i>
-                                </button>
-                                <button class="history-btn delete-history" data-index="${index}" title="Eliminar">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                    `);
-                    
-                    historyList.append(historyItem);
-                });
-                
-                // Asignar eventos a los botones del historial
-                $('.edit-history').click(function() {
-                    const index = $(this).data('index');
-                    const history = JSON.parse(localStorage.getItem('gradeHistory') || '[]');
-                    const item = history[index];
-                    
-                    $('#p75').val(item.p75);
-                    $('#p25').val(item.p25);
-                    calculateGrades();
-                    
-                    // Ir a la pestaña de calculadora
-                    $('.nav-item').removeClass('active');
-                    $('[data-tab="calculadora-tab"]').addClass('active');
-                    $('.content-tab').removeClass('active');
-                    $('#calculadora-tab').addClass('active');
-                    
-                    // Feedback visual
-                    const feedback = $(`<div style="position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: var(--info-color); color: white; padding: 10px 20px; border-radius: 5px; z-index: 1000; box-shadow: 0 3px 10px rgba(0,0,0,0.2);">Cálculo cargado</div>`);
-                    $('body').append(feedback);
-                    
-                    setTimeout(() => {
-                        feedback.fadeOut(500, () => feedback.remove());
-                    }, 2000);
-                });
-                
-                $('.export-history').click(function() {
-                    const index = $(this).data('index');
-                    const history = JSON.parse(localStorage.getItem('gradeHistory') || '[]');
-                    const item = history[index];
-                    
-                    // Crear un elemento temporal para exportar
-                    const tempElement = $(`
-                        <div class="calculator-card" style="margin: 20px;">
-                            <div class="card-header">
-                                <h2><i class="fas fa-calculator"></i> Historial de Cálculo</h2>
-                            </div>
-                            <div class="card-body">
-                                <div class="results-container">
-                                    <div class="result-item">
-                                        <span class="result-label">Puntos 75%:</span>
-                                        <span class="result-value">${item.p75}</span>
-                                    </div>
-                                    <div class="result-item">
-                                        <span class="result-label">Puntos 25%:</span>
-                                        <span class="result-value">${item.p25}</span>
-                                    </div>
-                                    <div class="result-item">
-                                        <span class="result-label">Nota final:</span>
-                                        <span class="result-value">${item.finalGrade}</span>
-                                    </div>
-                                </div>
-                                <div class="final-grade-container">
-                                    <h3 class="final-grade-title">NOTA GUARDADA</h3>
-                                    <div class="final-grade-value">${item.finalGrade}</div>
-                                    <p class="final-grade-message">Guardado el ${item.date}</p>
-                                </div>
-                            </div>
-                        </div>
-                    `);
-                    
-                    // Agregar al body temporalmente
-                    $('body').append(tempElement);
-                    
-                    // Exportar como PDF con alta calidad
-                    const options = {
-                        scale: 3, // Mayor escala para mejor calidad
-                        useCORS: true,
-                        allowTaint: true,
-                        backgroundColor: darkMode ? '#1e1e1e' : '#ffffff',
-                        quality: 1 // Máxima calidad
-                    };
-                    
-                    // Mostrar mensaje de procesamiento
-                    const processingMessage = $('<div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.8); color: white; padding: 20px; border-radius: 10px; z-index: 9999;">Preparando exportación...</div>');
-                    $('body').append(processingMessage);
-                    
-                    html2canvas(tempElement[0], options).then(canvas => {
-                        processingMessage.remove();
-                        const { jsPDF } = window.jspdf;
-                        const pdf = new jsPDF('p', 'mm', 'a4');
-                        const imgData = canvas.toDataURL('image/png', 1.0);
-                        const pdfWidth = pdf.internal.pageSize.getWidth();
-                        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-                        
-                        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-                        pdf.save(`Nota_UNAD_Historial_${index}.pdf`);
-                        
-                        // Eliminar el elemento temporal
-                        tempElement.remove();
-                    }).catch(err => {
-                        processingMessage.remove();
-                        alert('Error al exportar: ' + err.message);
-                        tempElement.remove();
-                    });
-                });
-                
-                $('.delete-history').click(function() {
-                    if (confirm('¿Estás seguro de que quieres eliminar este cálculo del historial?')) {
-                        const index = $(this).data('index');
-                        let history = JSON.parse(localStorage.getItem('gradeHistory') || '[]');
-                        
-                        history.splice(index, 1);
-                        localStorage.setItem('gradeHistory', JSON.stringify(history));
-                        loadHistory();
-                        
-                        // Feedback visual
-                        const feedback = $(`<div style="position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: var(--accent-color); color: white; padding: 10px 20px; border-radius: 5px; z-index: 1000; box-shadow: 0 3px 10px rgba(0,0,0,0.2);">Elemento eliminado</div>`);
-                        $('body').append(feedback);
-                        
-                        setTimeout(() => {
-                            feedback.fadeOut(500, () => feedback.remove());
-                        }, 2000);
-                    }
-                });
-            }
-            
-            function clearHistory() {
-                if (confirm('¿Estás seguro de que quieres borrar todo el historial? Esta acción no se puede deshacer.')) {
-                    localStorage.removeItem('gradeHistory');
-                    loadHistory();
-                    
-                    // Feedback visual
-                    const feedback = $(`<div style="position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: var(--accent-color); color: white; padding: 10px 20px; border-radius: 5px; z-index: 1000; box-shadow: 0 3px 10px rgba(0,0,0,0.2);">Historial borrado</div>`);
-                    $('body').append(feedback);
-                    
-                    setTimeout(() => {
-                        feedback.fadeOut(500, () => feedback.remove());
-                    }, 2000);
-                }
-            }
-            
-            // Funciones para modo oscuro
-            function enableDarkMode() {
-                $('body').addClass('dark-mode');
-                darkMode = true;
-                $('#themeToggle').prop('checked', true);
-                $('#floatingThemeBtn').html('<i class="fas fa-sun"></i>');
-                
-                // Actualizar gráfico si existe
-                if (gradeChart) {
-                    gradeChart.update();
-                }
-            }
-            
-            function disableDarkMode() {
-                $('body').removeClass('dark-mode');
-                darkMode = false;
-                $('#themeToggle').prop('checked', false);
-                $('#floatingThemeBtn').html('<i class="fas fa-moon"></i>');
-                
-                // Actualizar gráfico si existe
-                if (gradeChart) {
-                    gradeChart.update();
-                }
-            }
-            
-            // Escuchar cambios en el tema del sistema
-            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-                if (e.matches) {
-                    enableDarkMode();
-                } else {
-                    disableDarkMode();
-                }
-            });
-            
-            // Cargar preferencias de color guardadas
-            if (localStorage.getItem('primaryColor')) {
-                changePrimaryColor(localStorage.getItem('primaryColor'));
-            }
-            
-            // Deshabilitar zoom en dispositivos móviles
-            document.addEventListener('gesturestart', function(e) {
-                e.preventDefault();
-            });
-            
-            // Swipe para móviles
-            document.addEventListener('touchstart', function(e) {
-                touchStartX = e.changedTouches[0].screenX;
-            }, false);
-            
-            document.addEventListener('touchend', function(e) {
-                touchEndX = e.changedTouches[0].screenX;
-                handleSwipe();
-            }, false);
-            
-            function handleSwipe() {
-                const deltaX = touchEndX - touchStartX;
-                
-                // Solo considerar swipe si el movimiento es significativo
-                if (Math.abs(deltaX) > 50) {
-                    if (deltaX > 0) {
-                        // Swipe a la derecha - ir a pestaña anterior
-                        navigateTabs(-1);
-                    } else {
-                        // Swipe a la izquierda - ir a pestaña siguiente
-                        navigateTabs(1);
-                    }
-                }
-            }
-            
-            function navigateTabs(direction) {
-                const tabs = ['calculadora-tab', 'historial-tab', 'informacion-tab', 'guia-tab'];
-                const currentTab = $('.content-tab.active').attr('id');
-                const currentIndex = tabs.indexOf(currentTab);
-                let newIndex = currentIndex + direction;
-                
-                // Circular navigation
-                if (newIndex < 0) newIndex = tabs.length - 1;
-                if (newIndex >= tabs.length) newIndex = 0;
-                
-                // Activar la nueva pestaña
-                $('.nav-item').removeClass('active');
-                $(`.nav-item[data-tab="${tabs[newIndex]}"]`).addClass('active');
-                $('.content-tab').removeClass('active');
-                $(`#${tabs[newIndex]}`).addClass('active');
+                showFeedbackMessage('Elemento eliminado', 'accent');
             }
         });
+    }
+    
+    function clearHistory() {
+        if (confirm('¿Estás seguro de que quieres borrar todo el historial? Esta acción no se puede deshacer.')) {
+            localStorage.removeItem('gradeHistory');
+            loadHistory();
+            showFeedbackMessage('Historial borrado', 'accent');
+        }
+    }
+    
+    function enableDarkMode() {
+        $('body').addClass('dark-mode');
+        darkMode = true;
+        $('#themeToggle').prop('checked', true);
+        $('#floatingThemeBtn').html('<i class="fas fa-sun"></i>');
+        if (gradeChart) gradeChart.update();
+    }
+    
+    function disableDarkMode() {
+        $('body').removeClass('dark-mode');
+        darkMode = false;
+        $('#themeToggle').prop('checked', false);
+        $('#floatingThemeBtn').html('<i class="fas fa-moon"></i>');
+        if (gradeChart) gradeChart.update();
+    }
+    
+    // Funciones auxiliares
+    function showProcessingMessage(message) {
+        const processingMessage = $(`
+            <div class="processing-message">
+                <div class="processing-content">
+                    <div class="spinner"></div>
+                    <p>${message}</p>
+                </div>
+            </div>
+        `);
+        $('body').append(processingMessage);
+    }
+    
+    function removeProcessingMessage() {
+        $('.processing-message').remove();
+    }
+    
+    function showFeedbackMessage(message, type) {
+        const feedback = $(`
+            <div class="feedback-message ${type}">
+                ${message}
+            </div>
+        `);
+        $('body').append(feedback);
+        
+        setTimeout(() => {
+            feedback.fadeOut(500, () => feedback.remove());
+        }, 2000);
+    }
+    
+    // Eventos de gestos táctiles (solo horizontales)
+    document.addEventListener('touchstart', function(e) {
+        touchStartX = e.changedTouches[0].screenX;
+        touchEndY = e.changedTouches[0].screenY;
+    }, { passive: true });
+    
+    document.addEventListener('touchmove', function(e) {
+        const touch = e.changedTouches[0];
+        if (Math.abs(touch.screenX - touchStartX) > Math.abs(touch.screenY - touchEndY)) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+    
+    document.addEventListener('touchend', function(e) {
+        const touch = e.changedTouches[0];
+        const deltaX = touch.screenX - touchStartX;
+        const deltaY = touch.screenY - touchEndY;
+        
+        if (Math.abs(deltaX) > 50 && Math.abs(deltaY) < 30) {
+            if (deltaX > 0) {
+                navigateTabs(-1); // Swipe derecha
+            } else {
+                navigateTabs(1); // Swipe izquierda
+            }
+        }
+    }, { passive: true });
+    
+    function navigateTabs(direction) {
+        const tabs = ['calculadora-tab', 'historial-tab', 'informacion-tab', 'guia-tab'];
+        const currentTab = $('.content-tab.active').attr('id');
+        const currentIndex = tabs.indexOf(currentTab);
+        let newIndex = currentIndex + direction;
+        
+        if (newIndex < 0) newIndex = tabs.length - 1;
+        if (newIndex >= tabs.length) newIndex = 0;
+        
+        $('.nav-item').removeClass('active');
+        $(`.nav-item[data-tab="${tabs[newIndex]}"]`).addClass('active');
+        $('.content-tab').removeClass('active');
+        $(`#${tabs[newIndex]}`).addClass('active');
+    }
+    
+    // Escuchar cambios en el tema del sistema
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        e.matches ? enableDarkMode() : disableDarkMode();
+    });
+    
+    // Cargar preferencias de color guardadas
+    if (localStorage.getItem('primaryColor')) {
+        changePrimaryColor(localStorage.getItem('primaryColor'));
+    }
+    
+    // Deshabilitar zoom en dispositivos móviles
+    document.addEventListener('gesturestart', function(e) {
+        e.preventDefault();
+    }, { passive: false });
+});
     </script>
 </body>
 </html>
