@@ -1,0 +1,1552 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="Yakeline Caicedo Ramírez">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>Calculadora Premium UNAD</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+     :root {
+    --primary-color: #0b4237;
+    --primary-light: #0d5a4c;
+    --secondary-color: #f5a623;
+    --accent-color: #e74c3c;
+    --light-color: #f9f9f9;
+    --dark-color: #2c3e50;
+    --success-color: #27ae60;
+    --info-color: #3498db;
+    --text-light: #ecf0f1;
+    --text-dark: #2c3e50;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.6;
+    color: var(--text-dark);
+    background-color: #f5f7fa;
+    padding: 0;
+    margin: 0;
+    overflow-x: hidden;
+    touch-action: pan-y;
+}
+
+.top-bar {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    color: white;
+    padding: 15px 0;
+    box-shadow: var(--shadow);
+    position: relative;
+    z-index: 1000;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: white;
+}
+
+.logo img {
+    height: 50px;
+    margin-right: 15px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+.logo-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.logo-text span:first-child {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.logo-text span:last-child {
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+.theme-switch {
+    display: flex;
+    align-items: center;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+    margin-left: 10px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: var(--transition);
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: var(--transition);
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--secondary-color);
+}
+
+input:checked + .slider:before {
+    transform: translateX(30px);
+}
+
+.main-content {
+    padding: 30px 20px 120px;
+    min-height: calc(100vh - 180px);
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.content-tab {
+    display: none;
+}
+
+.content-tab.active {
+    display: block;
+    animation: fadeIn 0.5s ease;
+}
+
+/* MODIFICACIÓN PRINCIPAL (900px DE ANCHO) */
+.calculator-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    margin: 0 auto 30px;
+    transition: var(--transition);
+    width: 100%;
+    max-width: 94000px; /* Cambiado a 900px exactos */
+}
+
+.calculator-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+}
+
+.card-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    color: white;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-header h2 {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.card-header i {
+    font-size: 28px;
+    opacity: 0.8;
+}
+
+.card-body {
+    padding: 30px;
+}
+
+/* AJUSTE DEL GRID PARA 900px */
+.calculator-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px; /* Espacio ligeramente reducido para 900px */
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--dark-color);
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+.input-wrapper input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: var(--transition);
+    background-color: #f9f9f9;
+}
+
+.input-wrapper input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(11, 66, 55, 0.2);
+    outline: none;
+    background-color: white;
+}
+
+.input-wrapper .max-label {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--primary-color);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.error-message {
+    color: var(--accent-color);
+    font-size: 12px;
+    margin-top: 5px;
+    display: none;
+}
+
+.progress-container {
+    margin: 25px 0;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.progress-bar-bg {
+    height: 10px;
+    background: #e0e0e0;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    width: 0%;
+    transition: width 0.5s ease, background 0.3s;
+    border-radius: 5px;
+}
+
+.results-container {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 25px;
+    margin-top: 0;
+}
+
+.result-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.result-item:last-child {
+    border-bottom: none;
+}
+
+.result-label {
+    font-weight: 500;
+}
+
+.result-value {
+    font-weight: 600;
+    font-size: 18px;
+}
+
+.final-grade-container {
+    text-align: center;
+    margin-top: 30px;
+    padding: 25px;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    color: white;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+}
+
+.final-grade-container::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+    animation: rotate 20s linear infinite;
+}
+
+.final-grade-title {
+    font-size: 18px;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.final-grade-value {
+    font-size: 48px;
+    font-weight: 700;
+    margin: 15px 0;
+    position: relative;
+    text-shadow: 0 3px 6px rgba(0,0,0,0.1);
+}
+
+.success {
+    color: var(--success-color);
+}
+
+.warning {
+    color: var(--secondary-color);
+}
+
+.danger {
+    color: var(--accent-color);
+}
+
+.final-grade-message {
+    font-size: 16px;
+    opacity: 0.9;
+    position: relative;
+}
+
+.chart-container {
+    margin-top: 30px;
+    background: white;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: var(--shadow);
+    width: 100%;
+}
+
+.chart-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+}
+
+.chart-title i {
+    margin-right: 10px;
+    color: var(--secondary-color);
+}
+
+.guide-container {
+    margin-top: 40px;
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: var(--shadow);
+}
+
+.guide-title {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+}
+
+.guide-title i {
+    margin-right: 10px;
+    color: var(--secondary-color);
+}
+
+.guide-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.guide-step {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.guide-step:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+}
+
+.step-number {
+    background: var(--primary-color);
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.step-content {
+    position: relative;
+    z-index: 1;
+}
+
+.step-title {
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--dark-color);
+}
+
+.hand-animation {
+    font-size: 2rem;
+    animation: handBounce 1.2s infinite ease-in-out;
+    color: var(--secondary-color);
+    display: inline-block;
+    margin: 10px 0;
+    text-align: center;
+    width: 100%;
+}
+
+.info-container {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: var(--shadow);
+}
+
+.info-title {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+}
+
+.info-title i {
+    margin-right: 10px;
+    color: var(--secondary-color);
+}
+
+.info-content {
+    line-height: 1.8;
+}
+
+.info-content h3 {
+    margin: 20px 0 10px;
+    color: var(--primary-light);
+}
+
+.info-content ul, .info-content ol {
+    padding-left: 20px;
+    margin-bottom: 15px;
+}
+
+.info-content li {
+    margin-bottom: 8px;
+}
+
+.floating-btns {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    z-index: 1001;
+}
+
+.floating-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.floating-btn:hover {
+    transform: translateY(-3px) scale(1.1);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+.floating-btn i {
+    font-size: 20px;
+}
+
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
+    z-index: 1000;
+    padding: 10px 0;
+}
+
+.nav-items {
+    display: flex;
+    justify-content: space-around;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--dark-color);
+    text-decoration: none;
+    font-size: 12px;
+    transition: var(--transition);
+    padding: 5px 10px;
+    border-radius: 8px;
+}
+
+.nav-item i {
+    font-size: 22px;
+    margin-bottom: 5px;
+    color: var(--primary-color);
+}
+
+.nav-item.active, .nav-item:hover {
+    background: rgba(11, 66, 55, 0.1);
+    color: var(--primary-color);
+}
+
+.nav-item.active i, .nav-item:hover i {
+    color: var(--secondary-color);
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.modal.show {
+    display: flex;
+    opacity: 1;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    transform: translateY(20px);
+    transition: transform 0.3s;
+    position: relative;
+}
+
+.modal.show .modal-content {
+    transform: translateY(0);
+}
+
+.modal-header {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: var(--primary-color);
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--dark-color);
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.export-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.export-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.export-btn:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+.export-btn i {
+    font-size: 30px;
+    margin-bottom: 10px;
+}
+
+.welcome-modal .modal-content {
+    max-width: 600px;
+}
+
+.welcome-content {
+    text-align: center;
+}
+
+.welcome-icon {
+    font-size: 48px;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+}
+
+.dont-show-again {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.dont-show-again input {
+    margin-right: 10px;
+}
+
+.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+.dark-mode .calculator-card,
+.dark-mode .guide-step,
+.dark-mode .chart-container,
+.dark-mode .info-container,
+.dark-mode .guide-container {
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+}
+
+.dark-mode .input-wrapper input {
+    background-color: #2d2d2d;
+    border-color: #444;
+    color: #e0e0e0;
+}
+
+.dark-mode .results-container {
+    background-color: #252525;
+}
+
+.dark-mode .result-item {
+    border-bottom-color: #444;
+}
+
+.dark-mode .bottom-nav {
+    background-color: #1e1e1e;
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.3);
+}
+
+.dark-mode .nav-item {
+    color: #e0e0e0;
+}
+
+.dark-mode .modal-content {
+    background-color: #2d2d2d;
+    color: #e0e0e0;
+}
+
+.dark-mode .modal-header {
+    border-bottom-color: #444;
+}
+
+.dark-mode .export-btn {
+    background-color: #252525;
+    color: #e0e0e0;
+}
+
+.dark-mode .info-title,
+.dark-mode .guide-title {
+    color: var(--secondary-color);
+}
+
+.dark-mode .step-title {
+    color: #e0e0e0;
+}
+
+.dark-mode .welcome-icon {
+    color: var(--secondary-color);
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        overflow-x: hidden;
+        width: 100%;
+    }
+    
+    .content-tab {
+        width: 100%;
+        transition: transform 0.3s ease;
+    }
+    
+    .container {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .theme-switch {
+        margin-top: 15px;
+    }
+    
+    .final-grade-value {
+        font-size: 36px;
+    }
+    
+    .nav-items {
+        padding: 0 10px;
+    }
+    
+    .nav-item {
+        font-size: 10px;
+        padding: 5px;
+    }
+    
+    .nav-item i {
+        font-size: 18px;
+    }
+    
+    .floating-btns {
+        bottom: 70px;
+        right: 10px;
+    }
+    
+    .floating-btn {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .hand-animation {
+        font-size: 1.5rem;
+    }
+    
+    .welcome-modal .modal-content {
+        width: 95%;
+    }
+
+    .calculator-grid {
+        grid-template-columns: 1fr;
+        gap: 25px;
+        padding: 20px;
+    }
+    
+    .card-body {
+        padding: 20px;
+    }
+    
+    .results-container {
+        margin-top: 20px;
+    }
+}
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    .calculator-card, .calculator-card * {
+        visibility: visible;
+    }
+    .calculator-card {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        box-shadow: none;
+    }
+    .bottom-nav, .floating-btns {
+        display: none !important;
+    }
+}
+
+@keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes handBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(10px); }
+}
+
+.animate-pulse {
+    animation: pulse 2s infinite;
+}
+ 
+           
+    </style>
+</head>
+<body>
+    <!-- Barra superior -->
+    <div class="top-bar">
+        <div class="container">
+            <a href="#" class="logo">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ35G9hxSdz3L8EFu9jIwutfvewWzn7E1pTBc6Ue3e4iw&s" alt="Logo UNAD">
+                <div class="logo-text">
+                    <span>Calculadora de Calificaciones</span>
+                    <span>Universidad Nacional Abierta y a Distancia</span>
+                </div>
+            </a>
+            <div class="theme-switch">
+                <span>Modo oscuro</span>
+                <label class="switch">
+                    <input type="checkbox" id="themeToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Contenido principal -->
+    <div class="main-content">
+        <div class="container">
+            <!-- Sección de calculadora (activa por defecto) -->
+            <div id="calculadora-tab" class="content-tab active">
+                <div class="calculator-card animate__animated animate__fadeIn">
+                    <div class="card-header">
+                        <h2><i class="fas fa-calculator"></i> Calculadora de Notas</h2>
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="card-body">
+                        <div class="calculator-grid">
+                            <div>
+                                <div class="input-group">
+                                    <label for="p75">Puntos obtenidos (75%)</label>
+                                    <div class="input-wrapper">
+                                        <input type="number" id="p75" value="0" min="0" max="375" step="1" class="puntos-input">
+                                        <span class="max-label">Max 375</span>
+                                    </div>
+                                    <div class="error-message" id="error75">¡El valor máximo es 375 puntos!</div>
+                                    <div class="hand-animation">
+                                        <i class="fas fa-hand-point-down"></i>
+                                    </div>
+                                </div>
+                                
+                                <div class="input-group">
+                                    <label for="p25">Puntos obtenidos (25%)</label>
+                                    <div class="input-wrapper">
+                                        <input type="number" id="p25" value="0" min="0" max="125" step="1" class="puntos-input">
+                                        <span class="max-label">Max 125</span>
+                                    </div>
+                                    <div class="error-message" id="error25">¡El valor máximo es 125 puntos!</div>
+                                    <div class="hand-animation">
+                                        <i class="fas fa-hand-point-down"></i>
+                                    </div>
+                                </div>
+                                
+                                <div class="progress-container">
+                                    <div class="progress-info">
+                                        <span>Progreso total</span>
+                                        <span id="progressPercentage">0%</span>
+                                    </div>
+                                    <div class="progress-bar-bg">
+                                        <div class="progress-bar-fill" id="progressBar"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="results-container">
+                                <div class="result-item">
+                                    <span class="result-label">Nota 75%:</span>
+                                    <span class="result-value" id="n75">0.0</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Nota 25%:</span>
+                                    <span class="result-value" id="n25">0.0</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Total puntos:</span>
+                                    <span class="result-value" id="n100">0</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Nota final:</span>
+                                    <span class="result-value" id="tot">-</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="final-grade-container animate__animated animate__fadeInUp">
+                            <h3 class="final-grade-title">TU NOTA FINAL ES</h3>
+                            <div class="final-grade-value" id="finalGrade">0.0</div>
+                            <p class="final-grade-message" id="gradeMessage">Ingresa tus puntos para calcular tu nota final</p>
+                        </div>
+                        
+                        <!-- Gráfico Canvas -->
+                        <div class="chart-container animate__animated animate__fadeIn animate__delay-1s">
+                            <div class="chart-title">
+                                <i class="fas fa-chart-pie"></i> Distribución de tu calificación
+                            </div>
+                            <canvas id="gradeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sección de información -->
+            <div id="informacion-tab" class="content-tab">
+                <div class="info-container">
+                    <h2 class="info-title">
+                        <i class="fas fa-info-circle"></i> Información Importante
+                    </h2>
+                    <div class="info-content">
+                        <h3>Instrucciones de uso</h3>
+                        <p>Esta calculadora te permite determinar tu nota final en un curso de la UNAD basado en el sistema de evaluación que divide la calificación en dos componentes:</p>
+                        
+                        <ul>
+                            <li><strong>75% del curso:</strong> Corresponde a las actividades desarrolladas durante el periodo académico (trabajos, quices, foros, etc.)</li>
+                            <li><strong>25% del curso:</strong> Corresponde al examen final o actividad de cierre del curso</li>
+                        </ul>
+                        
+                        <h3>¿Cómo calcular tu nota?</h3>
+                        <ol>
+                            <li>Ingresa los puntos obtenidos en el componente del 75% (máximo 375 puntos)</li>
+                            <li>Ingresa los puntos obtenidos en el componente del 25% (máximo 125 puntos)</li>
+                            <li>La calculadora mostrará automáticamente tu nota final</li>
+                        </ol>
+                        
+                        <h3>Escala de calificación UNAD</h3>
+                        <p>La Universidad Nacional Abierta y a Distancia utiliza la siguiente escala de calificación:</p>
+                        
+                        <ul>
+                            <li>4.6 - 5.0: Excelente</li>
+                            <li>4.0 - 4.5: Bueno</li>
+                            <li>3.5 - 3.9: Aceptable</li>
+                            <li>3.0 - 3.4: Mínimo aprobatorio</li>
+                            <li>0.0 - 2.9: No aprobado</li>
+                        </ul>
+                        
+                        <h3>Consideraciones importantes</h3>
+                        <p>Recuerda que para aprobar un curso en la UNAD debes:</p>
+                        
+                        <ul>
+                            <li>Obtener una nota final igual o superior a 3.0</li>
+                            <li>Participar en al menos el 80% de las actividades propuestas</li>
+                            <li>Entregar todos los trabajos obligatorios del curso</li>
+                        </ul>
+                        
+                        <p>Esta calculadora es una herramienta de referencia. Las calificaciones oficiales son las publicadas por la universidad en su sistema académico.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sección de guía (ahora independiente) -->
+            <div id="guia-tab" class="content-tab">
+                <div class="guide-container">
+                    <h2 class="guide-title">
+                        <i class="fas fa-hands-helping"></i> Guía Paso a Paso
+                    </h2>
+                    
+                    <div class="guide-steps">
+                        <div class="guide-step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h3 class="step-title">Ingresa tus puntos del 75%</h3>
+                                <p>Escribe en el primer campo los puntos que has obtenido en actividades que valen el 75% de tu nota.</p>
+                                <div class="hand-animation">
+                                    <i class="fas fa-hand-point-right"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="guide-step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h3 class="step-title">Ingresa tus puntos del 25%</h3>
+                                <p>Escribe en el segundo campo los puntos obtenidos en actividades que valen el 25% restante.</p>
+                                <div class="hand-animation" style="animation-delay: 0.5s;">
+                                    <i class="fas fa-hand-point-right"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="guide-step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h3 class="step-title">Observa tus resultados</h3>
+                                <p>La calculadora mostrará automáticamente tus notas parciales y la nota final del curso.</p>
+                                <div class="hand-animation" style="animation-delay: 1s;">
+                                    <i class="fas fa-hand-point-up"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="guide-step">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <h3 class="step-title">Guarda tus resultados</h3>
+                                <p>Usa los botones flotantes para exportar tu calificación como imagen o PDF.</p>
+                                <div class="hand-animation" style="animation-delay: 1.5s;">
+                                    <i class="fas fa-hand-point-down"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Botones flotantes -->
+    <div class="floating-btns">
+        <button class="floating-btn" id="floatingExportBtn" title="Exportar resultados">
+            <i class="fas fa-file-export"></i>
+        </button>
+        <button class="floating-btn" id="floatingPrintBtn" title="Imprimir resultados">
+            <i class="fas fa-print"></i>
+        </button>
+    </div>
+    
+    <!-- Barra de navegación inferior -->
+    <div class="bottom-nav">
+        <div class="nav-items">
+            <a href="#" class="nav-item active" data-tab="calculadora-tab">
+                <i class="fas fa-calculator"></i>
+                <span>Calculadora</span>
+            </a>
+            <a href="#" class="nav-item" data-tab="informacion-tab">
+                <i class="fas fa-info-circle"></i>
+                <span>Información</span>
+            </a>
+            <a href="#" class="nav-item" data-tab="guia-tab">
+                <i class="fas fa-question-circle"></i>
+                <span>Guía</span>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Modal de exportación -->
+    <div class="modal" id="exportModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Exportar resultados</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Selecciona el formato en el que deseas guardar tus resultados:</p>
+                
+                <div class="export-options">
+                    <button class="export-btn" id="exportPng">
+                        <i class="fas fa-file-image"></i>
+                        <span>Imagen (PNG)</span>
+                    </button>
+                    
+                    <button class="export-btn" id="exportPdf">
+                        <i class="fas fa-file-pdf"></i>
+                        <span>Documento (PDF)</span>
+                    </button>
+                    
+                    <button class="export-btn" id="exportJpeg">
+                        <i class="fas fa-file-image"></i>
+                        <span>Imagen (JPEG)</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de bienvenida -->
+    <div class="modal welcome-modal" id="welcomeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>¡Bienvenido a la Calculadora UNAD!</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="welcome-content">
+                    <div class="welcome-icon">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <h4>Calcula tu nota final fácilmente</h4>
+                    <p>Esta herramienta te permite calcular tu calificación final basada en el sistema de evaluación de la UNAD (75% actividades + 25% examen final).</p>
+                    <p>Navega entre las secciones para usar la calculadora, ver información importante o seguir la guía paso a paso.</p>
+                    
+                    <div class="dont-show-again">
+                        <input type="checkbox" id="dontShowAgain">
+                        <label for="dontShowAgain">No mostrar este mensaje nuevamente</label>
+                    </div>
+                    
+                    <button onclick="closeWelcomeModal()" style="margin-top: 20px; padding: 10px 20px; background: var(--primary-color); color: white; border: none; border-radius: 8px; cursor: pointer;">
+                        Entendido
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Inicializar variables
+            let gradeChart = null;
+            let darkMode = false;
+            let touchStartX = 0;
+            let touchEndX = 0;
+            
+            // Mostrar modal de bienvenida si no está marcado para no mostrar
+            if (!localStorage.getItem('dontShowWelcome')) {
+                setTimeout(() => {
+                    $('#welcomeModal').addClass('show');
+                }, 500);
+            }
+            
+            // Función para cerrar el modal de bienvenida
+            window.closeWelcomeModal = function() {
+                if ($('#dontShowAgain').is(':checked')) {
+                    localStorage.setItem('dontShowWelcome', 'true');
+                }
+                $('#welcomeModal').removeClass('show');
+            };
+            
+            // Configurar tema inicial
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                enableDarkMode();
+            }
+            
+            // Cambiar tema
+            $('#themeToggle').change(function() {
+                if ($(this).is(':checked')) {
+                    enableDarkMode();
+                } else {
+                    disableDarkMode();
+                }
+            });
+            
+            // Navegación por pestañas
+            $('[data-tab]').click(function(e) {
+                e.preventDefault();
+                const tabId = $(this).data('tab');
+                
+                // Actualizar navegación
+                $('.nav-item').removeClass('active');
+                $(this).addClass('active');
+                
+                // Ocultar todas las pestañas
+                $('.content-tab').removeClass('active');
+                
+                // Mostrar pestaña correspondiente
+                $(`#${tabId}`).addClass('active');
+            });
+            
+            // Botones flotantes
+            $('#floatingExportBtn').click(function() {
+                $('#exportModal').addClass('show');
+            });
+            
+            $('#floatingPrintBtn').click(function() {
+                printResults();
+            });
+            
+            // Cerrar modales
+            $('.close-modal').click(function() {
+                $(this).closest('.modal').removeClass('show');
+            });
+            
+            // Exportar como PNG
+            $('#exportPng').click(function() {
+                exportResults('png');
+            });
+            
+            // Exportar como PDF
+            $('#exportPdf').click(function() {
+                exportResults('pdf');
+            });
+            
+            // Exportar como JPEG
+            $('#exportJpeg').click(function() {
+                exportResults('jpeg');
+            });
+            
+            // Calcular notas al cambiar valores
+            $('.puntos-input').on('input', function() {
+                calculateGrades();
+            });
+            
+            // Inicializar cálculo
+            calculateGrades();
+            
+            // Función para calcular notas
+            function calculateGrades() {
+                // Obtener valores
+                const p75 = parseFloat($('#p75').val()) || 0;
+                const p25 = parseFloat($('#p25').val()) || 0;
+                
+                // Validar
+                const error75 = p75 > 375;
+                const error25 = p25 > 125;
+                
+                $('#error75').toggle(error75);
+                $('#error25').toggle(error25);
+                
+                // Calcular notas
+                const n75 = error75 ? 0 : (p75 / 75).toFixed(1);
+                const n25 = error25 ? 0 : (p25 / 25).toFixed(1);
+                const totalPoints = (error75 || error25) ? 0 : (p75 + p25);
+                const finalGrade = (error75 || error25) ? 0 : (p75 / 75 * 0.75 + p25 / 25 * 0.25).toFixed(1);
+                
+                // Actualizar UI
+                $('#n75').text(n75);
+                $('#n25').text(n25);
+                $('#n100').text(totalPoints);
+                $('#tot').text(finalGrade);
+                
+                // Actualizar nota final
+                updateFinalGrade(finalGrade, error75 || error25);
+                
+                // Actualizar progreso
+                updateProgress(p75, p25, error75, error25);
+                
+                // Actualizar gráfico
+                updateChart(n75, n25, finalGrade);
+            }
+            
+            // Función para actualizar la nota final
+            function updateFinalGrade(grade, isError) {
+                if (isError) {
+                    $('#finalGrade').text('0.0').removeClass('success warning danger animate-pulse');
+                    $('#gradeMessage').text('Corrige los valores ingresados').removeClass('success warning danger');
+                    return;
+                }
+                
+                $('#finalGrade').text(grade);
+                
+                // Estilo según la nota
+                if (grade >= 4.5) {
+                    $('#finalGrade').addClass('success').removeClass('warning danger');
+                    $('#gradeMessage').text('¡Excelente trabajo! Sigue así.').addClass('success').removeClass('warning danger');
+                } else if (grade >= 3.5) {
+                    $('#finalGrade').addClass('warning').removeClass('success danger');
+                    $('#gradeMessage').text('Buen resultado. Puedes mejorar.').addClass('warning').removeClass('success danger');
+                } else if (grade >= 3.0) {
+                    $('#finalGrade').addClass('danger').removeClass('success warning');
+                    $('#gradeMessage').text('Aprobado, pero considera reforzar tus conocimientos.').addClass('danger').removeClass('success warning');
+                } else {
+                    $('#finalGrade').addClass('danger animate-pulse').removeClass('success warning');
+                    $('#gradeMessage').text('Necesitas mejorar tu desempeño.').addClass('danger').removeClass('success warning');
+                }
+            }
+            
+            // Función para actualizar la barra de progreso
+            function updateProgress(p75, p25, error75, error25) {
+                const maxPossible = 500;
+                const currentTotal = (error75 ? 0 : p75) + (error25 ? 0 : p25);
+                const progressPercent = Math.min(100, (currentTotal / maxPossible) * 100);
+                
+                $('#progressPercentage').text(Math.round(progressPercent) + '%');
+                $('#progressBar').css('width', progressPercent + '%');
+                
+                // Cambiar color según progreso
+                if (progressPercent >= 90) {
+                    $('#progressBar').css('background', 'linear-gradient(90deg, var(--primary-color), var(--success-color))');
+                } else if (progressPercent >= 70) {
+                    $('#progressBar').css('background', 'linear-gradient(90deg, var(--primary-color), var(--secondary-color))');
+                } else {
+                    $('#progressBar').css('background', 'linear-gradient(90deg, var(--primary-color), var(--accent-color))');
+                }
+            }
+            
+            // Función para actualizar el gráfico
+            function updateChart(n75, n25, finalGrade) {
+                const ctx = document.getElementById('gradeChart').getContext('2d');
+                
+                // Destruir gráfico anterior si existe
+                if (gradeChart) {
+                    gradeChart.destroy();
+                }
+                
+                // Crear nuevo gráfico
+                gradeChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['75% del curso', '25% del curso'],
+                        datasets: [{
+                            data: [n75 * 0.75, n25 * 0.25],
+                            backgroundColor: [
+                                'rgba(11, 66, 55, 0.8)',
+                                'rgba(245, 166, 35, 0.8)'
+                            ],
+                            borderColor: [
+                                'rgba(11, 66, 55, 1)',
+                                'rgba(245, 166, 35, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    font: {
+                                        family: 'Poppins',
+                                        size: 12
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `${context.label}: ${context.raw.toFixed(2)} (${(context.raw * 20).toFixed(1)}%)`;
+                                    }
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: `Nota Final: ${finalGrade}`,
+                                font: {
+                                    family: 'Poppins',
+                                    size: 16,
+                                    weight: 'bold'
+                                }
+                            }
+                        },
+                        cutout: '70%',
+                        animation: {
+                            animateScale: true,
+                            animateRotate: true
+                        }
+                    }
+                });
+            }
+            
+            // Función para exportar resultados
+            function exportResults(format) {
+                const element = $('.calculator-card')[0];
+                const fileName = `Nota_UNAD_${new Date().toISOString().slice(0,10)}`;
+                
+                // Configuración de html2canvas
+                const options = {
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: darkMode ? '#1e1e1e' : '#ffffff'
+                };
+                
+                html2canvas(element, options).then(canvas => {
+                    if (format === 'pdf') {
+                        const { jsPDF } = window.jspdf;
+                        const pdf = new jsPDF('p', 'mm', 'a4');
+                        const imgData = canvas.toDataURL('image/png');
+                        const pdfWidth = pdf.internal.pageSize.getWidth();
+                        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+                        
+                        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                        pdf.save(`${fileName}.pdf`);
+                    } else {
+                        const link = document.createElement('a');
+                        link.download = `${fileName}.${format}`;
+                        link.href = canvas.toDataURL(`image/${format}`);
+                        link.click();
+                    }
+                    
+                    $('#exportModal').removeClass('show');
+                });
+            }
+            
+            // Función para imprimir resultados
+            function printResults() {
+                const originalContents = $('body').html();
+                const printContents = $('.calculator-card').clone();
+                
+                // Ajustar estilos para impresión
+                printContents.find('.card-header').css({
+                    'background': 'linear-gradient(135deg, #0b4237, #0d5a4c)',
+                    'color': 'white',
+                    'padding': '20px'
+                });
+                
+                $('body').html(printContents);
+                window.print();
+                $('body').html(originalContents);
+                
+                // Recalcular después de restaurar el contenido
+                calculateGrades();
+            }
+            
+            // Funciones para modo oscuro
+            function enableDarkMode() {
+                $('body').addClass('dark-mode');
+                darkMode = true;
+                $('#themeToggle').prop('checked', true);
+                
+                // Actualizar gráfico si existe
+                if (gradeChart) {
+                    gradeChart.update();
+                }
+            }
+            
+            function disableDarkMode() {
+                $('body').removeClass('dark-mode');
+                darkMode = false;
+                $('#themeToggle').prop('checked', false);
+                
+                // Actualizar gráfico si existe
+                if (gradeChart) {
+                    gradeChart.update();
+                }
+            }
+            
+            // Escuchar cambios en el tema del sistema
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                if (e.matches) {
+                    enableDarkMode();
+                } else {
+                    disableDarkMode();
+                }
+            });
+            
+            // Deshabilitar zoom en dispositivos móviles
+            document.addEventListener('gesturestart', function(e) {
+                e.preventDefault();
+            });
+            
+            // Swipe para móviles
+            document.addEventListener('touchstart', function(e) {
+                touchStartX = e.changedTouches[0].screenX;
+            }, false);
+            
+            document.addEventListener('touchend', function(e) {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            }, false);
+            
+            function handleSwipe() {
+                const deltaX = touchEndX - touchStartX;
+                
+                // Solo considerar swipe si el movimiento es significativo
+                if (Math.abs(deltaX) > 50) {
+                    if (deltaX > 0) {
+                        // Swipe a la derecha - ir a pestaña anterior
+                        navigateTabs(-1);
+                    } else {
+                        // Swipe a la izquierda - ir a pestaña siguiente
+                        navigateTabs(1);
+                    }
+                }
+            }
+            
+            function navigateTabs(direction) {
+                const tabs = ['calculadora-tab', 'informacion-tab', 'guia-tab'];
+                const currentTab = $('.content-tab.active').attr('id');
+                const currentIndex = tabs.indexOf(currentTab);
+                let newIndex = currentIndex + direction;
+                
+                // Circular navigation
+                if (newIndex < 0) newIndex = tabs.length - 1;
+                if (newIndex >= tabs.length) newIndex = 0;
+                
+                // Activar la nueva pestaña
+                $('.nav-item').removeClass('active');
+                $(`.nav-item[data-tab="${tabs[newIndex]}"]`).addClass('active');
+                $('.content-tab').removeClass('active');
+                $(`#${tabs[newIndex]}`).addClass('active');
+            }
+        });
+    </script>
+</body>
+</html>
