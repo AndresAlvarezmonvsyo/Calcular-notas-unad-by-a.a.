@@ -1448,26 +1448,72 @@ input:checked + .slider:before {
                 });
             }
             
-            // Función para imprimir resultados
-            function printResults() {
-                const originalContents = $('body').html();
-                const printContents = $('.calculator-card').clone();
-                
-                // Ajustar estilos para impresión
-                printContents.find('.card-header').css({
-                    'background': 'linear-gradient(135deg, #0b4237, #0d5a4c)',
-                    'color': 'white',
-                    'padding': '20px'
-                });
-                
-                $('body').html(printContents);
-                window.print();
-                $('body').html(originalContents);
-                
-                // Recalcular después de restaurar el contenido
-                calculateGrades();
-            }
-            
+   function printResults() {
+    const chartCanvas = document.getElementById('gradeChart');
+
+    // Esperar un pequeño delay para asegurar que el gráfico esté renderizado
+    setTimeout(() => {
+        const chartImage = chartCanvas.toDataURL(); // captura como imagen
+
+        const finalGrade = $('#finalGrade').text();
+        const message = $('#gradeMessage').text();
+
+        const printWindow = window.open('', '', 'height=600,width=800');
+        printWindow.document.write(`
+            <html>
+            <head>
+                <title>Imprimir Nota Final</title>
+                <style>
+                    body {
+                        font-family: 'Segoe UI', sans-serif;
+                        text-align: center;
+                        padding: 40px;
+                        background: #f9f9f9;
+                        color: #222;
+                    }
+                    h1 {
+                        font-size: 26px;
+                        margin-bottom: 10px;
+                        color: #0b4237;
+                    }
+                    .grade-value {
+                        font-size: 60px;
+                        font-weight: bold;
+                        color: #0d5a4c;
+                        margin-bottom: 15px;
+                    }
+                    .grade-message {
+                        font-size: 18px;
+                        margin-bottom: 30px;
+                    }
+                    .chart {
+                        margin: auto;
+                        width: 400px;
+                        max-width: 90%;
+                        border-top: 1px solid #ccc;
+                        padding-top: 20px;
+                    }
+                </style>
+            </head>
+            <body>
+                <h1>Tu Nota Final</h1>
+                <div class="grade-value">${finalGrade}</div>
+                <div class="grade-message">${message}</div>
+                <div class="chart">
+                    <img src="${chartImage}" style="width: 100%;" />
+                </div>
+            </body>
+            </html>
+        `);
+        printWindow.document.close();
+        printWindow.focus();
+        printWindow.print();
+        printWindow.close();
+    }, 300); // espera 300ms para asegurar que el gráfico esté listo
+}
+
+
+ 
             // Funciones para modo oscuro
             function enableDarkMode() {
                 $('body').addClass('dark-mode');
