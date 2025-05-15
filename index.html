@@ -3,1044 +3,1122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="author" content="Julian Andres Alvarez">
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <title>Calculadora Premium</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>Calculadora Premium UNAD</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-     :root {
-    --primary-color: #0b4237;
-    --primary-light: #0d5a4c;
-    --secondary-color: #f5a623;
-    --accent-color: #e74c3c;
-    --light-color: #f9f9f9;
-    --dark-color: #2c3e50;
-    --success-color: #27ae60;
-    --info-color: #3498db;
-    --text-light: #ecf0f1;
-    --text-dark: #2c3e50;
-    --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-body {
-    font-family: 'Poppins', sans-serif;
-    line-height: 1.6;
-    color: var(--text-dark);
-    background-color: #f5f7fa;
-    padding: 0;
-    margin: 0;
-    overflow-x: hidden;
-    touch-action: pan-y;
-}
-
-.top-bar {
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
-    color: white;
-    padding: 15px 0;
-    box-shadow: var(--shadow);
-    position: relative;
-    z-index: 1000;
-}
-
-.container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.logo {
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-    color: white;
-}
-
-.logo img {
-    height: 70px;
-    margin-right: 15px;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
-}
-
-.logo-text {
-    display: flex;
-    flex-direction: column;
-}
-
-.logo-text span:first-child {
-    font-size: 24px;
-    font-weight: 700;
-    line-height: 1;
-}
-
-.logo-text span:last-child {
-    font-size: 14px;
-    opacity: 0.8;
-}
-
-.student-note {
-    font-size: 12px;
-    margin-top: 5px;
-    color: rgba(255,255,255,0.8);
-    font-style: italic;
-}
-
-.theme-switch {
-    display: flex;
-    align-items: center;
-}
-
-.switch {
-    position: relative;
-    display: inline-block;
-    width: 60px;
-    height: 30px;
-    margin-left: 10px;
-}
-
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    transition: var(--transition);
-    border-radius: 34px;
-}
-
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 22px;
-    width: 22px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    transition: var(--transition);
-    border-radius: 50%;
-}
-
-input:checked + .slider {
-    background-color: var(--secondary-color);
-}
-
-input:checked + .slider:before {
-    transform: translateX(30px);
-}
-
-.main-content {
-    padding: 30px 20px 120px;
-    min-height: calc(100vh - 180px);
-    max-width: 1400px;
-    margin: 0 auto;
-}
-
-.content-tab {
-    display: none;
-}
-
-.content-tab.active {
-    display: block;
-    animation: fadeIn 0.5s ease;
-}
-
-.calculator-card {
-    background: white;
-    border-radius: 15px;
-    box-shadow: var(--shadow);
-    overflow: hidden;
-    margin: 0 auto 30px;
-    transition: var(--transition);
-    width: 100%;
-    max-width: 900px;
-}
-
-.calculator-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-}
-
-.card-header {
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
-    color: white;
-    padding: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.card-header h2 {
-    font-size: 24px;
-    font-weight: 600;
-    margin: 0;
-}
-
-.card-header i {
-    font-size: 28px;
-    opacity: 0.8;
-}
-
-.card-body {
-    padding: 30px;
-}
-
-.calculator-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 40px;
-}
-
-.input-group {
-    margin-bottom: 20px;
-}
-
-.input-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 500;
-    color: var(--dark-color);
-}
-
-.input-wrapper {
-    position: relative;
-}
-
-.input-wrapper input {
-    width: 100%;
-    padding: 12px 15px;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    font-size: 16px;
-    transition: var(--transition);
-    background-color: #f9f9f9;
-}
-
-.input-wrapper input:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(11, 66, 55, 0.2);
-    outline: none;
-    background-color: white;
-}
-
-.input-wrapper .max-label {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: var(--primary-color);
-    color: white;
-    padding: 2px 8px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 500;
-}
-
-.error-message {
-    color: var(--accent-color);
-    font-size: 12px;
-    margin-top: 5px;
-    display: none;
-}
-
-.progress-container {
-    margin: 25px 0;
-}
-
-.progress-info {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
-}
-
-.progress-bar-bg {
-    height: 10px;
-    background: #e0e0e0;
-    border-radius: 5px;
-    overflow: hidden;
-}
-
-.progress-bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-    width: 0%;
-    transition: width 0.5s ease, background 0.3s;
-    border-radius: 5px;
-}
-
-.results-container {
-    background: #f8f9fa;
-    border-radius: 10px;
-    padding: 25px;
-    margin-top: 0;
-}
-
-.result-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 12px 0;
-    border-bottom: 1px solid #e0e0e0;
-}
-
-.result-item:last-child {
-    border-bottom: none;
-}
-
-.result-label {
-    font-weight: 500;
-}
-
-.result-value {
-    font-weight: 600;
-    font-size: 18px;
-}
-
-.final-grade-container {
-    text-align: center;
-    margin-top: 30px;
-    padding: 25px;
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
-    color: white;
-    border-radius: 10px;
-    box-shadow: var(--shadow);
-    position: relative;
-    overflow: hidden;
-}
-
-.final-grade-container::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
-    animation: rotate 20s linear infinite;
-}
-
-.final-grade-title {
-    font-size: 18px;
-    margin-bottom: 10px;
-    position: relative;
-}
-
-.final-grade-value {
-    font-size: 48px;
-    font-weight: 700;
-    margin: 15px 0;
-    position: relative;
-    text-shadow: 0 3px 6px rgba(0,0,0,0.1);
-}
-
-.success {
-    color: var(--success-color);
-}
-
-.warning {
-    color: var(--secondary-color);
-}
-
-.danger {
-    color: var(--accent-color);
-}
-
-.final-grade-message {
-    font-size: 16px;
-    opacity: 0.9;
-    position: relative;
-}
-
-.chart-container {
-    margin-top: 30px;
-    background: white;
-    border-radius: 10px;
-    padding: 25px;
-    box-shadow: var(--shadow);
-    width: 100%;
-}
-
-.chart-title {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 15px;
-    color: var(--primary-color);
-    display: flex;
-    align-items: center;
-}
-
-.chart-title i {
-    margin-right: 10px;
-    color: var(--secondary-color);
-}
-
-.guide-container {
-    margin-top: 40px;
-    background: white;
-    border-radius: 15px;
-    padding: 25px;
-    box-shadow: var(--shadow);
-}
-
-.guide-title {
-    font-size: 22px;
-    font-weight: 600;
-    margin-bottom: 20px;
-    color: var(--primary-color);
-    display: flex;
-    align-items: center;
-}
-
-.guide-title i {
-    margin-right: 10px;
-    color: var(--secondary-color);
-}
-
-.guide-steps {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-}
-
-.guide-step {
-    background: white;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: var(--shadow);
-    transition: var(--transition);
-    position: relative;
-    overflow: hidden;
-}
-
-.guide-step:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-}
-
-.step-number {
-    background: var(--primary-color);
-    color: white;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-    margin-bottom: 15px;
-}
-
-.step-content {
-    position: relative;
-    z-index: 1;
-}
-
-.step-title {
-    font-weight: 600;
-    margin-bottom: 10px;
-    color: var(--dark-color);
-}
-
-.hand-animation {
-    font-size: 2rem;
-    animation: handBounce 1.2s infinite ease-in-out;
-    color: var(--secondary-color);
-    display: inline-block;
-    margin: 10px 0;
-    text-align: center;
-    width: 100%;
-}
-
-.info-container {
-    background: white;
-    border-radius: 15px;
-    padding: 25px;
-    box-shadow: var(--shadow);
-}
-
-.info-title {
-    font-size: 22px;
-    font-weight: 600;
-    margin-bottom: 20px;
-    color: var(--primary-color);
-    display: flex;
-    align-items: center;
-}
-
-.info-title i {
-    margin-right: 10px;
-    color: var(--secondary-color);
-}
-
-.info-content {
-    line-height: 1.8;
-}
-
-.info-content h3 {
-    margin: 20px 0 10px;
-    color: var(--primary-light);
-}
-
-.info-content ul, .info-content ol {
-    padding-left: 20px;
-    margin-bottom: 15px;
-}
-
-.info-content li {
-    margin-bottom: 8px;
-}
-
-.floating-btns {
-    position: fixed;
-    bottom: 80px;
-    right: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    z-index: 1001;
-}
-
-.floating-btn {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    border: none;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.floating-btn:hover {
-    transform: translateY(-3px) scale(1.1);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-}
-
-.floating-btn i {
-    font-size: 20px;
-}
-
-.bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: white;
-    box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
-    z-index: 1000;
-    padding: 10px 0;
-}
-
-.nav-items {
-    display: flex;
-    justify-content: space-around;
-    max-width: 1400px;
-    margin: 0 auto;
-}
-
-.nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: var(--dark-color);
-    text-decoration: none;
-    font-size: 12px;
-    transition: var(--transition);
-    padding: 5px 10px;
-    border-radius: 8px;
-}
-
-.nav-item i {
-    font-size: 22px;
-    margin-bottom: 5px;
-    color: var(--primary-color);
-}
-
-.nav-item.active, .nav-item:hover {
-    background: rgba(11, 66, 55, 0.1);
-    color: var(--primary-color);
-}
-
-.nav-item.active i, .nav-item:hover i {
-    color: var(--secondary-color);
-}
-
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0,0,0,0.7);
-    z-index: 2000;
-    justify-content: center;
-    align-items: center;
-    opacity: 0;
-    transition: opacity 0.3s;
-}
-
-.modal.show {
-    display: flex;
-    opacity: 1;
-}
-
-.modal-content {
-    background: white;
-    border-radius: 15px;
-    width: 90%;
-    max-width: 500px;
-    max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    transform: translateY(20px);
-    transition: transform 0.3s;
-    position: relative;
-}
-
-.modal.show .modal-content {
-    transform: translateY(0);
-}
-
-.modal-header {
-    padding: 20px;
-    border-bottom: 1px solid #eee;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.modal-header h3 {
-    margin: 0;
-    color: var(--primary-color);
-}
-
-.close-modal {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: var(--dark-color);
-}
-
-.modal-body {
-    padding: 20px;
-}
-
-.export-options {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-    margin-top: 20px;
-}
-
-.export-btn {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    background: #f8f9fa;
-    border-radius: 10px;
-    border: none;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.export-btn:hover {
-    background: var(--primary-color);
-    color: white;
-}
-
-.export-btn i {
-    font-size: 30px;
-    margin-bottom: 10px;
-}
-
-.welcome-modal .modal-content {
-    max-width: 600px;
-}
-
-.welcome-content {
-    text-align: center;
-}
-
-.welcome-icon {
-    font-size: 48px;
-    color: var(--primary-color);
-    margin-bottom: 20px;
-}
-
-.dont-show-again {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 20px;
-}
-
-.dont-show-again input {
-    margin-right: 10px;
-}
-
-.dark-mode {
-    background-color: #121212;
-    color: #e0e0e0;
-}
-
-.dark-mode .calculator-card,
-.dark-mode .guide-step,
-.dark-mode .chart-container,
-.dark-mode .info-container,
-.dark-mode .guide-container {
-    background-color: #1e1e1e;
-    color: #e0e0e0;
-}
-
-.dark-mode .input-wrapper input {
-    background-color: #2d2d2d;
-    border-color: #444;
-    color: #e0e0e0;
-}
-
-.dark-mode .results-container {
-    background-color: #252525;
-}
-
-.dark-mode .result-item {
-    border-bottom-color: #444;
-}
-
-.dark-mode .bottom-nav {
-    background-color: #1e1e1e;
-    box-shadow: 0 -5px 20px rgba(0,0,0,0.3);
-}
-
-.dark-mode .nav-item {
-    color: #e0e0e0;
-}
-
-.dark-mode .modal-content {
-    background-color: #2d2d2d;
-    color: #e0e0e0;
-}
-
-.dark-mode .modal-header {
-    border-bottom-color: #444;
-}
-
-.dark-mode .export-btn {
-    background-color: #252525;
-    color: #e0e0e0;
-}
-
-.dark-mode .info-title,
-.dark-mode .guide-title {
-    color: var(--secondary-color);
-}
-
-.dark-mode .step-title {
-    color: #e0e0e0;
-}
-
-.dark-mode .welcome-icon {
-    color: var(--secondary-color);
-}
-
-.history-container {
-    margin-top: 40px;
-    background: white;
-    border-radius: 15px;
-    padding: 25px;
-    box-shadow: var(--shadow);
-}
-
-.history-title {
-    font-size: 22px;
-    font-weight: 600;
-    margin-bottom: 20px;
-    color: var(--primary-color);
-    display: flex;
-    align-items: center;
-}
-
-.history-title i {
-    margin-right: 10px;
-    color: var(--secondary-color);
-}
-
-.history-list {
-    margin-top: 20px;
-}
-
-.history-item {
-    background: #f8f9fa;
-    border-radius: 10px;
-    padding: 15px;
-    margin-bottom: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: var(--transition);
-}
-
-.history-item:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
-
-.history-details {
-    flex: 1;
-}
-
-.history-grade {
-    font-size: 24px;
-    font-weight: 700;
-    margin-right: 15px;
-    min-width: 60px;
-    text-align: center;
-}
-
-.history-actions {
-    display: flex;
-    gap: 10px;
-}
-
-.history-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    padding: 5px;
-    color: var(--primary-color);
-    transition: var(--transition);
-}
-
-.history-btn:hover {
-    color: var(--secondary-color);
-    transform: scale(1.1);
-}
-
-.history-date {
-    font-size: 12px;
-    color: #666;
-    margin-top: 5px;
-}
-
-.clear-history {
-    margin-top: 20px;
-    text-align: right;
-}
-
-.clear-history-btn {
-    background: var(--accent-color);
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.clear-history-btn:hover {
-    background: #c0392b;
-}
-
-.dark-mode .history-container,
-.dark-mode .history-item {
-    background-color: #252525;
-}
-
-.dark-mode .history-item {
-    background-color: #2d2d2d;
-}
-
-.dark-mode .history-date {
-    color: #aaa;
-}
-
-.dark-mode .history-btn {
-    color: var(--secondary-color);
-}
-
-@media (max-width: 768px) {
-    .main-content {
+    :root {
+        --primary-color: #0b4237;
+        --primary-light: #0d5a4c;
+        --secondary-color: #f5a623;
+        --accent-color: #e74c3c;
+        --light-color: #f9f9f9;
+        --dark-color: #2c3e50;
+        --success-color: #27ae60;
+        --info-color: #3498db;
+        --text-light: #ecf0f1;
+        --text-dark: #2c3e50;
+        --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        line-height: 1.6;
+        color: var(--text-dark);
+        background-color: #f5f7fa;
+        padding: 0;
+        margin: 0;
         overflow-x: hidden;
-        width: 100%;
     }
-    
-    .content-tab {
-        width: 100%;
-        transition: transform 0.3s ease;
+
+    .top-bar {
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+        color: white;
+        padding: 15px 0;
+        box-shadow: var(--shadow);
+        position: relative;
+        z-index: 1000;
     }
-    
+
     .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        color: white;
+    }
+
+    .logo img {
+        height: 70px;
+        margin-right: 15px;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+    }
+
+    .logo-text {
+        display: flex;
         flex-direction: column;
-        text-align: center;
     }
-    
+
+    .logo-text span:first-child {
+        font-size: 24px;
+        font-weight: 700;
+        line-height: 1;
+    }
+
+    .logo-text span:last-child {
+        font-size: 14px;
+        opacity: 0.8;
+    }
+
+    .student-note {
+        font-size: 12px;
+        margin-top: 5px;
+        color: rgba(255,255,255,0.8);
+        font-style: italic;
+    }
+
     .theme-switch {
-        margin-top: 15px;
+        display: flex;
+        align-items: center;
     }
-    
-    .final-grade-value {
-        font-size: 36px;
+
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 30px;
+        margin-left: 10px;
     }
-    
-    .nav-items {
-        padding: 0 10px;
+
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
     }
-    
-    .nav-item {
-        font-size: 10px;
-        padding: 5px;
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: var(--transition);
+        border-radius: 34px;
     }
-    
-    .nav-item i {
-        font-size: 18px;
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 22px;
+        width: 22px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: var(--transition);
+        border-radius: 50%;
     }
-    
-    .floating-btns {
-        bottom: 70px;
-        right: 10px;
+
+    input:checked + .slider {
+        background-color: var(--secondary-color);
     }
-    
-    .floating-btn {
-        width: 45px;
-        height: 45px;
+
+    input:checked + .slider:before {
+        transform: translateX(30px);
     }
-    
-    .hand-animation {
-        font-size: 1.5rem;
+
+    .main-content {
+        padding: 30px 20px 120px;
+        min-height: calc(100vh - 180px);
+        max-width: 1400px;
+        margin: 0 auto;
     }
-    
-    .welcome-modal .modal-content {
-        width: 95%;
+
+    .content-tab {
+        display: none;
+    }
+
+    .content-tab.active {
+        display: block;
+        animation: fadeIn 0.5s ease;
+    }
+
+    .calculator-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        margin: 0 auto 30px;
+        transition: var(--transition);
+        width: 100%;
+        max-width: 900px;
+    }
+
+    .calculator-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+        color: white;
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .card-header h2 {
+        font-size: 24px;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .card-header i {
+        font-size: 28px;
+        opacity: 0.8;
+    }
+
+    .card-body {
+        padding: 30px;
     }
 
     .calculator-grid {
-        grid-template-columns: 1fr;
-        gap: 25px;
-        padding: 20px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
     }
-    
-    .card-body {
-        padding: 20px;
+
+    .input-group {
+        margin-bottom: 20px;
     }
-    
+
+    .input-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: var(--dark-color);
+    }
+
+    .input-wrapper {
+        position: relative;
+    }
+
+    .input-wrapper input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: var(--transition);
+        background-color: #f9f9f9;
+    }
+
+    .input-wrapper input:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(11, 66, 55, 0.2);
+        outline: none;
+        background-color: white;
+    }
+
+    .input-wrapper .max-label {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: var(--primary-color);
+        color: white;
+        padding: 2px 8px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .error-message {
+        color: var(--accent-color);
+        font-size: 12px;
+        margin-top: 5px;
+        display: none;
+    }
+
+    .progress-container {
+        margin: 25px 0;
+    }
+
+    .progress-info {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+    }
+
+    .progress-bar-bg {
+        height: 10px;
+        background: #e0e0e0;
+        border-radius: 5px;
+        overflow: hidden;
+    }
+
+    .progress-bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        width: 0%;
+        transition: width 0.5s ease, background 0.3s;
+        border-radius: 5px;
+    }
+
     .results-container {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 25px;
+        margin-top: 0;
+    }
+
+    .result-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .result-item:last-child {
+        border-bottom: none;
+    }
+
+    .result-label {
+        font-weight: 500;
+    }
+
+    .result-value {
+        font-weight: 600;
+        font-size: 18px;
+    }
+
+    .final-grade-container {
+        text-align: center;
+        margin-top: 30px;
+        padding: 25px;
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+        color: white;
+        border-radius: 10px;
+        box-shadow: var(--shadow);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .final-grade-container::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+        animation: rotate 20s linear infinite;
+    }
+
+    .final-grade-title {
+        font-size: 18px;
+        margin-bottom: 10px;
+        position: relative;
+    }
+
+    .final-grade-value {
+        font-size: 48px;
+        font-weight: 700;
+        margin: 15px 0;
+        position: relative;
+        text-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    }
+
+    .success {
+        color: var(--success-color);
+    }
+
+    .warning {
+        color: var(--secondary-color);
+    }
+
+    .danger {
+        color: var(--accent-color);
+    }
+
+    .final-grade-message {
+        font-size: 16px;
+        opacity: 0.9;
+        position: relative;
+    }
+
+    .chart-container {
+        margin-top: 30px;
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: var(--shadow);
+        width: 100%;
+    }
+
+    .chart-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+    }
+
+    .chart-title i {
+        margin-right: 10px;
+        color: var(--secondary-color);
+    }
+
+    .guide-container {
+        margin-top: 40px;
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: var(--shadow);
+    }
+
+    .guide-title {
+        font-size: 22px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+    }
+
+    .guide-title i {
+        margin-right: 10px;
+        color: var(--secondary-color);
+    }
+
+    .guide-steps {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+    }
+
+    .guide-step {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: var(--shadow);
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .guide-step:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    }
+
+    .step-number {
+        background: var(--primary-color);
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+
+    .step-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    .step-title {
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: var(--dark-color);
+    }
+
+    .hand-animation {
+        font-size: 2rem;
+        animation: handBounce 1.2s infinite ease-in-out;
+        color: var(--secondary-color);
+        display: inline-block;
+        margin: 10px 0;
+        text-align: center;
+        width: 100%;
+    }
+
+    .info-container {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: var(--shadow);
+    }
+
+    .info-title {
+        font-size: 22px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+    }
+
+    .info-title i {
+        margin-right: 10px;
+        color: var(--secondary-color);
+    }
+
+    .info-content {
+        line-height: 1.8;
+    }
+
+    .info-content h3 {
+        margin: 20px 0 10px;
+        color: var(--primary-light);
+    }
+
+    .info-content ul, .info-content ol {
+        padding-left: 20px;
+        margin-bottom: 15px;
+    }
+
+    .info-content li {
+        margin-bottom: 8px;
+    }
+
+    .floating-btns {
+        position: fixed;
+        bottom: 80px;
+        right: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        z-index: 1001;
+    }
+
+    .floating-btn {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        border: none;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .floating-btn:hover {
+        transform: translateY(-3px) scale(1.1);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+
+    .floating-btn i {
+        font-size: 20px;
+    }
+
+    .bottom-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: white;
+        box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
+        z-index: 1000;
+        padding: 10px 0;
+    }
+
+    .nav-items {
+        display: flex;
+        justify-content: space-around;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: var(--dark-color);
+        text-decoration: none;
+        font-size: 12px;
+        transition: var(--transition);
+        padding: 5px 10px;
+        border-radius: 8px;
+    }
+
+    .nav-item i {
+        font-size: 22px;
+        margin-bottom: 5px;
+        color: var(--primary-color);
+    }
+
+    .nav-item.active, .nav-item:hover {
+        background: rgba(11, 66, 55, 0.1);
+        color: var(--primary-color);
+    }
+
+    .nav-item.active i, .nav-item:hover i {
+        color: var(--secondary-color);
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.7);
+        z-index: 2000;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    .modal.show {
+        display: flex;
+        opacity: 1;
+    }
+
+    .modal-content {
+        background: white;
+        border-radius: 15px;
+        width: 90%;
+        max-width: 500px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        transform: translateY(20px);
+        transition: transform 0.3s;
+        position: relative;
+    }
+
+    .modal.show .modal-content {
+        transform: translateY(0);
+    }
+
+    .modal-header {
+        padding: 20px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-header h3 {
+        margin: 0;
+        color: var(--primary-color);
+    }
+
+    .close-modal {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: var(--dark-color);
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    .export-options {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
         margin-top: 20px;
     }
-    
-    .history-item {
+
+    .export-btn {
+        display: flex;
         flex-direction: column;
-        align-items: flex-start;
-    }
-    
-    .history-actions {
-        margin-top: 10px;
-        align-self: flex-end;
-    }
-}
-
-@media print {
-    body * {
-        visibility: hidden;
-    }
-    .calculator-card, .calculator-card * {
-        visibility: visible;
-    }
-    .calculator-card {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        box-shadow: none;
-        background: white !important;
-        color: black !important;
-    }
-    .bottom-nav, .floating-btns {
-        display: none !important;
-    }
-    
-    /* Mejoras para impresión en móviles */
-    @page {
-        size: auto;
-        margin: 10mm;
-    }
-    
-    .calculator-card {
-        width: auto;
-        margin: 0;
-        padding: 0;
-        box-shadow: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 10px;
         border: none;
+        cursor: pointer;
+        transition: var(--transition);
     }
-    
-    .card-body {
-        padding: 10px;
+
+    .export-btn:hover {
+        background: var(--primary-color);
+        color: white;
     }
-    
-    .final-grade-container {
-        margin-top: 15px;
+
+    .export-btn i {
+        font-size: 30px;
+        margin-bottom: 10px;
+    }
+
+    .welcome-modal .modal-content {
+        max-width: 600px;
+    }
+
+    .welcome-content {
+        text-align: center;
+    }
+
+    .welcome-icon {
+        font-size: 48px;
+        color: var(--primary-color);
+        margin-bottom: 20px;
+    }
+
+    .dont-show-again {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .dont-show-again input {
+        margin-right: 10px;
+    }
+
+    .dark-mode {
+        background-color: #121212;
+        color: #e0e0e0;
+    }
+
+    .dark-mode .calculator-card,
+    .dark-mode .guide-step,
+    .dark-mode .chart-container,
+    .dark-mode .info-container,
+    .dark-mode .guide-container {
+        background-color: #1e1e1e;
+        color: #e0e0e0;
+    }
+
+    .dark-mode .input-wrapper input {
+        background-color: #2d2d2d;
+        border-color: #444;
+        color: #e0e0e0;
+    }
+
+    .dark-mode .results-container {
+        background-color: #252525;
+    }
+
+    .dark-mode .result-item {
+        border-bottom-color: #444;
+    }
+
+    .dark-mode .bottom-nav {
+        background-color: #1e1e1e;
+        box-shadow: 0 -5px 20px rgba(0,0,0,0.3);
+    }
+
+    .dark-mode .nav-item {
+        color: #e0e0e0;
+    }
+
+    .dark-mode .modal-content {
+        background-color: #2d2d2d;
+        color: #e0e0e0;
+    }
+
+    .dark-mode .modal-header {
+        border-bottom-color: #444;
+    }
+
+    .dark-mode .export-btn {
+        background-color: #252525;
+        color: #e0e0e0;
+    }
+
+    .dark-mode .info-title,
+    .dark-mode .guide-title {
+        color: var(--secondary-color);
+    }
+
+    .dark-mode .step-title {
+        color: #e0e0e0;
+    }
+
+    .dark-mode .welcome-icon {
+        color: var(--secondary-color);
+    }
+
+    /* Sección de Historial independiente */
+    .history-tab {
+        margin-top: 30px;
+    }
+
+    .history-container {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: var(--shadow);
+        margin-bottom: 30px;
+    }
+
+    .history-title {
+        font-size: 22px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+    }
+
+    .history-title i {
+        margin-right: 10px;
+        color: var(--secondary-color);
+    }
+
+    .history-list {
+        margin-top: 20px;
+    }
+
+    .history-item {
+        background: #f8f9fa;
+        border-radius: 10px;
         padding: 15px;
+        margin-bottom: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: var(--transition);
     }
-    
-    .final-grade-value {
-        font-size: 36px;
+
+    .history-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
-    
-    /* Asegurar que el gráfico se imprima correctamente */
-    #gradeChart {
-        max-width: 100% !important;
-        height: auto !important;
+
+    .history-details {
+        flex: 1;
     }
-}
 
-@keyframes rotate {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
+    .history-grade {
+        font-size: 24px;
+        font-weight: 700;
+        margin-right: 15px;
+        min-width: 60px;
+        text-align: center;
+    }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+    .history-actions {
+        display: flex;
+        gap: 10px;
+    }
 
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
-}
+    .history-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        padding: 5px;
+        color: var(--primary-color);
+        transition: var(--transition);
+    }
 
-@keyframes handBounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(10px); }
-}
+    .history-btn:hover {
+        color: var(--secondary-color);
+        transform: scale(1.1);
+    }
 
-.animate-pulse {
-    animation: pulse 2s infinite;
-}
-</style>
+    .history-date {
+        font-size: 12px;
+        color: #666;
+        margin-top: 5px;
+    }
+
+    .clear-history {
+        margin-top: 20px;
+        text-align: right;
+    }
+
+    .clear-history-btn {
+        background: var(--accent-color);
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .clear-history-btn:hover {
+        background: #c0392b;
+    }
+
+    .dark-mode .history-container,
+    .dark-mode .history-item {
+        background-color: #252525;
+    }
+
+    .dark-mode .history-item {
+        background-color: #2d2d2d;
+    }
+
+    .dark-mode .history-date {
+        color: #aaa;
+    }
+
+    .dark-mode .history-btn {
+        color: var(--secondary-color);
+    }
+
+    /* Panel de personalización */
+    .customization-panel {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: var(--shadow);
+        margin-top: 30px;
+    }
+
+    .customization-title {
+        font-size: 22px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+    }
+
+    .customization-title i {
+        margin-right: 10px;
+        color: var(--secondary-color);
+    }
+
+    .color-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-top: 15px;
+    }
+
+    .color-option {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: var(--transition);
+    }
+
+    .color-option.selected {
+        border-color: var(--dark-color);
+        transform: scale(1.1);
+    }
+
+    .dark-mode .customization-panel {
+        background-color: #1e1e1e;
+    }
+
+    /* Mejoras para impresión */
+    @media print {
+        body * {
+            visibility: hidden;
+        }
+        
+        .calculator-card, .calculator-card *,
+        .history-container, .history-container * {
+            visibility: visible;
+        }
+        
+        .calculator-card, .history-container {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            box-shadow: none;
+            background: white !important;
+            color: black !important;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .bottom-nav, .floating-btns, .top-bar {
+            display: none !important;
+        }
+        
+        @page {
+            size: auto;
+            margin: 5mm;
+        }
+        
+        .card-body {
+            padding: 10px !important;
+        }
+        
+        .final-grade-container {
+            margin-top: 15px !important;
+            padding: 15px !important;
+        }
+        
+        .final-grade-value {
+            font-size: 36px !important;
+        }
+        
+        #gradeChart {
+            max-width: 100% !important;
+            height: auto !important;
+        }
+        
+        .history-item {
+            page-break-inside: avoid;
+        }
+        
+        .final-grade-container, .chart-container {
+            page-break-inside: avoid;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .main-content {
+            overflow-x: hidden;
+            width: 100%;
+        }
+        
+        .content-tab {
+            width: 100%;
+            transition: transform 0.3s ease;
+        }
+        
+        .container {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .theme-switch {
+            margin-top: 15px;
+        }
+        
+        .final-grade-value {
+            font-size: 36px;
+        }
+        
+        .nav-items {
+            padding: 0 10px;
+        }
+        
+        .nav-item {
+            font-size: 10px;
+            padding: 5px;
+        }
+        
+        .nav-item i {
+            font-size: 18px;
+        }
+        
+        .floating-btns {
+            bottom: 70px;
+            right: 10px;
+        }
+        
+        .floating-btn {
+            width: 45px;
+            height: 45px;
+        }
+        
+        .hand-animation {
+            font-size: 1.5rem;
+        }
+        
+        .welcome-modal .modal-content {
+            width: 95%;
+        }
+
+        .calculator-grid {
+            grid-template-columns: 1fr;
+            gap: 25px;
+            padding: 20px;
+        }
+        
+        .card-body {
+            padding: 20px;
+        }
+        
+        .results-container {
+            margin-top: 20px;
+        }
+        
+        .history-item {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .history-actions {
+            margin-top: 10px;
+            align-self: flex-end;
+        }
+        
+        @media print {
+            .calculator-card, .history-container {
+                position: static;
+                width: auto;
+                margin: 0;
+                padding: 10px;
+            }
+            
+            .final-grade-value {
+                font-size: 28px !important;
+            }
+            
+            .result-value {
+                font-size: 16px !important;
+            }
+            
+            .chart-container {
+                padding: 10px !important;
+            }
+        }
+    }
+
+    @keyframes rotate {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+
+    @keyframes handBounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(10px); }
+    }
+
+    .animate-pulse {
+        animation: pulse 2s infinite;
+    }
+    </style>
 </head>
 <body>
     <!-- Barra superior -->
@@ -1160,8 +1238,10 @@ input:checked + .slider:before {
                         </div>
                     </div>
                 </div>
-                
-                <!-- Sección de historial -->
+            </div>
+            
+            <!-- Sección de historial (ahora independiente) -->
+            <div id="historial-tab" class="content-tab history-tab">
                 <div class="history-container">
                     <h2 class="history-title">
                         <i class="fas fa-history"></i> Historial de Cálculos
@@ -1175,6 +1255,29 @@ input:checked + .slider:before {
                     <div class="clear-history">
                         <button class="clear-history-btn" id="clearHistoryBtn">
                             <i class="fas fa-trash"></i> Limpiar historial
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Panel de personalización -->
+                <div class="customization-panel">
+                    <h2 class="customization-title">
+                        <i class="fas fa-palette"></i> Personalización
+                    </h2>
+                    <p>Cambia los colores principales de la aplicación:</p>
+                    
+                    <div class="color-options">
+                        <div class="color-option selected" style="background: #0b4237;" data-color="#0b4237"></div>
+                        <div class="color-option" style="background: #2c3e50;" data-color="#2c3e50"></div>
+                        <div class="color-option" style="background: #8e44ad;" data-color="#8e44ad"></div>
+                        <div class="color-option" style="background: #16a085;" data-color="#16a085"></div>
+                        <div class="color-option" style="background: #2980b9;" data-color="#2980b9"></div>
+                        <div class="color-option" style="background: #c0392b;" data-color="#c0392b"></div>
+                    </div>
+                    
+                    <div style="margin-top: 20px;">
+                        <button id="resetColors" style="padding: 8px 15px; background: var(--accent-color); color: white; border: none; border-radius: 5px; cursor: pointer;">
+                            <i class="fas fa-undo"></i> Restablecer colores
                         </button>
                     </div>
                 </div>
@@ -1286,6 +1389,17 @@ input:checked + .slider:before {
                         </div>
                     </div>
                 </div>
+                
+                <!-- Video tutorial -->
+                <div class="info-container" style="margin-top: 30px;">
+                    <h2 class="info-title">
+                        <i class="fas fa-video"></i> Video Tutorial
+                    </h2>
+                    <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; margin-top: 20px; border-radius: 10px;">
+                        <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;" src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+                    </div>
+                    <p style="text-align: center; margin-top: 15px;">Aprende a usar todas las funciones de la calculadora con este video tutorial.</p>
+                </div>
             </div>
         </div>
     </div>
@@ -1298,6 +1412,9 @@ input:checked + .slider:before {
         <button class="floating-btn" id="floatingPrintBtn" title="Imprimir resultados">
             <i class="fas fa-print"></i>
         </button>
+        <button class="floating-btn" id="floatingThemeBtn" title="Cambiar tema">
+            <i class="fas fa-moon"></i>
+        </button>
     </div>
     
     <!-- Barra de navegación inferior -->
@@ -1306,6 +1423,10 @@ input:checked + .slider:before {
             <a href="#" class="nav-item active" data-tab="calculadora-tab">
                 <i class="fas fa-calculator"></i>
                 <span>Calculadora</span>
+            </a>
+            <a href="#" class="nav-item" data-tab="historial-tab">
+                <i class="fas fa-history"></i>
+                <span>Historial</span>
             </a>
             <a href="#" class="nav-item" data-tab="informacion-tab">
                 <i class="fas fa-info-circle"></i>
@@ -1343,6 +1464,11 @@ input:checked + .slider:before {
                         <i class="fas fa-file-image"></i>
                         <span>Imagen (JPEG)</span>
                     </button>
+                    
+                    <button class="export-btn" id="exportCsv">
+                        <i class="fas fa-file-csv"></i>
+                        <span>Datos (CSV)</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -1352,7 +1478,7 @@ input:checked + .slider:before {
     <div class="modal welcome-modal" id="welcomeModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>¡Bienvenido a la Calculadora UNAD!</h3>
+                <h3>¡Bienvenido a la Calculadora UNAD Premium!</h3>
                 <button class="close-modal">&times;</button>
             </div>
             <div class="modal-body">
@@ -1361,9 +1487,18 @@ input:checked + .slider:before {
                         <i class="fas fa-calculator"></i>
                     </div>
                     <h4>Calcula tu nota final fácilmente</h4>
-                    <p>Esta herramienta fue desarrollada por un estudiante de Ingeniería en Sistemas como complemento a la calculadora oficial de la UNAD, con el objetivo de brindar una experiencia más completa.</p>
-                    <p>No es una competencia con los sistemas oficiales, sino un avance hacia el futuro de herramientas educativas más intuitivas.</p>
-                    <p>Navega entre las secciones para usar la calculadora, ver información importante o seguir la guía paso a paso.</p>
+                    <p>Esta herramienta premium fue desarrollada por un estudiante de Ingeniería en Sistemas como complemento a la calculadora oficial de la UNAD, con el objetivo de brindar una experiencia más completa.</p>
+                    
+                    <div style="text-align: left; margin: 20px 0;">
+                        <h5 style="color: var(--primary-color); margin-bottom: 10px;">Nuevas características:</h5>
+                        <ul>
+                            <li>Historial independiente con más funciones</li>
+                            <li>Personalización de colores</li>
+                            <li>Mejor soporte para impresión en móviles</li>
+                            <li>Exportación a múltiples formatos</li>
+                            <li>Interfaz más intuitiva</li>
+                        </ul>
+                    </div>
                     
                     <div class="dont-show-again">
                         <input type="checkbox" id="dontShowAgain">
@@ -1371,7 +1506,7 @@ input:checked + .slider:before {
                     </div>
                     
                     <button onclick="closeWelcomeModal()" style="margin-top: 20px; padding: 10px 20px; background: var(--primary-color); color: white; border: none; border-radius: 8px; cursor: pointer;">
-                        Entendido
+                        Comenzar a usar
                     </button>
                 </div>
             </div>
@@ -1419,6 +1554,11 @@ input:checked + .slider:before {
                 }
             });
             
+            // Botón flotante para cambiar tema
+            $('#floatingThemeBtn').click(function() {
+                $('#themeToggle').click();
+            });
+            
             // Navegación por pestañas
             $('[data-tab]').click(function(e) {
                 e.preventDefault();
@@ -1433,6 +1573,11 @@ input:checked + .slider:before {
                 
                 // Mostrar pestaña correspondiente
                 $(`#${tabId}`).addClass('active');
+                
+                // Redibujar el gráfico si es necesario
+                if (tabId === 'calculadora-tab' && gradeChart) {
+                    gradeChart.update();
+                }
             });
             
             // Botones flotantes
@@ -1464,6 +1609,11 @@ input:checked + .slider:before {
                 exportResults('jpeg');
             });
             
+            // Exportar como CSV
+            $('#exportCsv').click(function() {
+                exportToCsv();
+            });
+            
             // Calcular notas al cambiar valores
             $('.puntos-input').on('input', function() {
                 calculateGrades();
@@ -1479,11 +1629,60 @@ input:checked + .slider:before {
             // Botones de historial
             $('#clearHistoryBtn').click(clearHistory);
             
+            // Personalización de colores
+            $('.color-option').click(function() {
+                const newColor = $(this).data('color');
+                changePrimaryColor(newColor);
+                $('.color-option').removeClass('selected');
+                $(this).addClass('selected');
+            });
+            
+            $('#resetColors').click(function() {
+                changePrimaryColor('#0b4237');
+                $('.color-option').removeClass('selected');
+                $('.color-option:first').addClass('selected');
+            });
+            
             // Cargar historial al iniciar
             loadHistory();
             
             // Inicializar cálculo
             calculateGrades();
+            
+            // Función para cambiar el color principal
+            function changePrimaryColor(newColor) {
+                // Calcular color más claro para el gradiente
+                const lighterColor = lightenColor(newColor, 20);
+                
+                // Actualizar variables CSS
+                $('body').css('--primary-color', newColor);
+                $('body').css('--primary-light', lighterColor);
+                
+                // Guardar preferencia
+                localStorage.setItem('primaryColor', newColor);
+                localStorage.setItem('primaryLight', lighterColor);
+                
+                // Redibujar gráfico si existe
+                if (gradeChart) {
+                    gradeChart.update();
+                }
+            }
+            
+            // Función para aclarar un color
+            function lightenColor(color, percent) {
+                const num = parseInt(color.replace("#", ""), 16);
+                const amt = Math.round(2.55 * percent);
+                const R = (num >> 16) + amt;
+                const G = (num >> 8 & 0x00FF) + amt;
+                const B = (num & 0x0000FF) + amt;
+                
+                return "#" + (
+                    0x1000000 +
+                    (R < 255 ? (R < 1 ? 0 : R) : 255) * 0x10000 +
+                    (G < 255 ? (G < 1 ? 0 : G) : 255) * 0x100 +
+                    (B < 255 ? (B < 1 ? 0 : B) : 255)
+                ).toString(16).slice(1);
+            }
             
             // Función para calcular notas
             function calculateGrades() {
@@ -1557,11 +1756,11 @@ input:checked + .slider:before {
                 
                 // Cambiar color según progreso
                 if (progressPercent >= 90) {
-                    $('#progressBar').css('background', 'linear-gradient(90deg, var(--primary-color), var(--success-color))');
+                    $('#progressBar').css('background', `linear-gradient(90deg, var(--primary-color), var(--success-color))`);
                 } else if (progressPercent >= 70) {
-                    $('#progressBar').css('background', 'linear-gradient(90deg, var(--primary-color), var(--secondary-color))');
+                    $('#progressBar').css('background', `linear-gradient(90deg, var(--primary-color), var(--secondary-color))`);
                 } else {
-                    $('#progressBar').css('background', 'linear-gradient(90deg, var(--primary-color), var(--accent-color))');
+                    $('#progressBar').css('background', `linear-gradient(90deg, var(--primary-color), var(--accent-color))`);
                 }
             }
             
@@ -1632,8 +1831,16 @@ input:checked + .slider:before {
             
             // Función para exportar resultados
             function exportResults(format) {
-                const element = $('.calculator-card')[0];
-                const fileName = `Nota_UNAD_${new Date().toISOString().slice(0,10)}`;
+                let element, fileName;
+                
+                // Determinar qué exportar según la pestaña activa
+                if ($('#historial-tab').hasClass('active')) {
+                    element = $('.history-container')[0];
+                    fileName = `Historial_Notas_UNAD_${new Date().toISOString().slice(0,10)}`;
+                } else {
+                    element = $('.calculator-card')[0];
+                    fileName = `Nota_UNAD_${new Date().toISOString().slice(0,10)}`;
+                }
                 
                 // Configuración de html2canvas con mayor calidad
                 const options = {
@@ -1676,10 +1883,45 @@ input:checked + .slider:before {
                 });
             }
             
+            // Función para exportar a CSV
+            function exportToCsv() {
+                const history = JSON.parse(localStorage.getItem('gradeHistory') || []);
+                if (history.length === 0) {
+                    alert('No hay datos en el historial para exportar');
+                    return;
+                }
+                
+                let csv = 'Fecha,Puntos 75%,Puntos 25%,Nota Final\n';
+                
+                history.forEach(item => {
+                    csv += `"${item.date}",${item.p75},${item.p25},${item.finalGrade}\n`;
+                });
+                
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                
+                link.setAttribute('href', url);
+                link.setAttribute('download', `Historial_Notas_UNAD_${new Date().toISOString().slice(0,10)}.csv`);
+                link.style.visibility = 'hidden';
+                
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                $('#exportModal').removeClass('show');
+            }
+            
             // Función mejorada para imprimir resultados
             function printResults() {
-                // Crear un clon del elemento para imprimir
-                const printContent = $('.calculator-card').clone();
+                let printContent;
+                
+                // Determinar qué imprimir según la pestaña activa
+                if ($('#historial-tab').hasClass('active')) {
+                    printContent = $('.history-container').clone();
+                } else {
+                    printContent = $('.calculator-card').clone();
+                }
                 
                 // Ajustar estilos para impresión
                 printContent.css({
@@ -1691,15 +1933,16 @@ input:checked + .slider:before {
                 });
                 
                 // Ocultar botones en la impresión
-                printContent.find('#saveToHistory, #printBtn, #exportBtn').hide();
+                printContent.find('button').hide();
                 
                 // Crear ventana de impresión
                 const printWindow = window.open('', '', 'width=800,height=600');
                 printWindow.document.open();
-                printWindow.document.write(`
+                
+                let printHtml = `
                     <html>
                     <head>
-                        <title>Imprimir Nota Final</title>
+                        <title>${$('#historial-tab').hasClass('active') ? 'Historial de Notas' : 'Nota Final UNAD'}</title>
                         <style>
                             @media print {
                                 body {
@@ -1708,7 +1951,7 @@ input:checked + .slider:before {
                                     color: black;
                                     padding: 20px;
                                 }
-                                .calculator-card {
+                                .calculator-card, .history-container {
                                     width: 100% !important;
                                     max-width: 100% !important;
                                     margin: 0 !important;
@@ -1732,6 +1975,9 @@ input:checked + .slider:before {
                                 button {
                                     display: none !important;
                                 }
+                                .history-item {
+                                    page-break-inside: avoid;
+                                }
                             }
                             @page {
                                 size: auto;
@@ -1741,6 +1987,11 @@ input:checked + .slider:before {
                     </head>
                     <body>
                         ${printContent.html()}
+                `;
+                
+                // Agregar script para el gráfico si es necesario
+                if (!$('#historial-tab').hasClass('active') && gradeChart) {
+                    printHtml += `
                         <script src="https://cdn.jsdelivr.net/npm/chart.js"><\/script>
                         <script>
                             // Recrear el gráfico en la ventana de impresión
@@ -1767,9 +2018,27 @@ input:checked + .slider:before {
                                 }, 500);
                             };
                         <\/script>
+                    `;
+                } else {
+                    printHtml += `
+                        <script>
+                            // Solo imprimir y cerrar
+                            window.onload = function() {
+                                setTimeout(() => {
+                                    window.print();
+                                    setTimeout(() => window.close(), 100);
+                                }, 100);
+                            };
+                        <\/script>
+                    `;
+                }
+                
+                printHtml += `
                     </body>
                     </html>
-                `);
+                `;
+                
+                printWindow.document.write(printHtml);
                 printWindow.document.close();
             }
             
@@ -1802,8 +2071,13 @@ input:checked + .slider:before {
                 localStorage.setItem('gradeHistory', JSON.stringify(history));
                 loadHistory();
                 
-                // Mostrar feedback
-                alert('¡Cálculo guardado en el historial!');
+                // Mostrar feedback visual
+                const feedback = $(`<div style="position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: var(--success-color); color: white; padding: 10px 20px; border-radius: 5px; z-index: 1000; box-shadow: 0 3px 10px rgba(0,0,0,0.2);">¡Cálculo guardado en el historial!</div>`);
+                $('body').append(feedback);
+                
+                setTimeout(() => {
+                    feedback.fadeOut(500, () => feedback.remove());
+                }, 2000);
             }
             
             function loadHistory() {
@@ -1856,6 +2130,14 @@ input:checked + .slider:before {
                     $('[data-tab="calculadora-tab"]').addClass('active');
                     $('.content-tab').removeClass('active');
                     $('#calculadora-tab').addClass('active');
+                    
+                    // Feedback visual
+                    const feedback = $(`<div style="position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: var(--info-color); color: white; padding: 10px 20px; border-radius: 5px; z-index: 1000; box-shadow: 0 3px 10px rgba(0,0,0,0.2);">Cálculo cargado</div>`);
+                    $('body').append(feedback);
+                    
+                    setTimeout(() => {
+                        feedback.fadeOut(500, () => feedback.remove());
+                    }, 2000);
                 });
                 
                 $('.export-history').click(function() {
@@ -1937,6 +2219,14 @@ input:checked + .slider:before {
                         history.splice(index, 1);
                         localStorage.setItem('gradeHistory', JSON.stringify(history));
                         loadHistory();
+                        
+                        // Feedback visual
+                        const feedback = $(`<div style="position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: var(--accent-color); color: white; padding: 10px 20px; border-radius: 5px; z-index: 1000; box-shadow: 0 3px 10px rgba(0,0,0,0.2);">Elemento eliminado</div>`);
+                        $('body').append(feedback);
+                        
+                        setTimeout(() => {
+                            feedback.fadeOut(500, () => feedback.remove());
+                        }, 2000);
                     }
                 });
             }
@@ -1945,6 +2235,14 @@ input:checked + .slider:before {
                 if (confirm('¿Estás seguro de que quieres borrar todo el historial? Esta acción no se puede deshacer.')) {
                     localStorage.removeItem('gradeHistory');
                     loadHistory();
+                    
+                    // Feedback visual
+                    const feedback = $(`<div style="position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: var(--accent-color); color: white; padding: 10px 20px; border-radius: 5px; z-index: 1000; box-shadow: 0 3px 10px rgba(0,0,0,0.2);">Historial borrado</div>`);
+                    $('body').append(feedback);
+                    
+                    setTimeout(() => {
+                        feedback.fadeOut(500, () => feedback.remove());
+                    }, 2000);
                 }
             }
             
@@ -1953,6 +2251,7 @@ input:checked + .slider:before {
                 $('body').addClass('dark-mode');
                 darkMode = true;
                 $('#themeToggle').prop('checked', true);
+                $('#floatingThemeBtn').html('<i class="fas fa-sun"></i>');
                 
                 // Actualizar gráfico si existe
                 if (gradeChart) {
@@ -1964,6 +2263,7 @@ input:checked + .slider:before {
                 $('body').removeClass('dark-mode');
                 darkMode = false;
                 $('#themeToggle').prop('checked', false);
+                $('#floatingThemeBtn').html('<i class="fas fa-moon"></i>');
                 
                 // Actualizar gráfico si existe
                 if (gradeChart) {
@@ -1979,6 +2279,11 @@ input:checked + .slider:before {
                     disableDarkMode();
                 }
             });
+            
+            // Cargar preferencias de color guardadas
+            if (localStorage.getItem('primaryColor')) {
+                changePrimaryColor(localStorage.getItem('primaryColor'));
+            }
             
             // Deshabilitar zoom en dispositivos móviles
             document.addEventListener('gesturestart', function(e) {
@@ -2011,7 +2316,7 @@ input:checked + .slider:before {
             }
             
             function navigateTabs(direction) {
-                const tabs = ['calculadora-tab', 'informacion-tab', 'guia-tab'];
+                const tabs = ['calculadora-tab', 'historial-tab', 'informacion-tab', 'guia-tab'];
                 const currentTab = $('.content-tab.active').attr('id');
                 const currentIndex = tabs.indexOf(currentTab);
                 let newIndex = currentIndex + direction;
