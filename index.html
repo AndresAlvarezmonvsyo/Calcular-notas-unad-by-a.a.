@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -506,14 +505,62 @@
         margin-bottom: 8px;
     }
 
-    .floating-btns {
+    /* Botones flotantes agrupados */
+    .floating-btn-container {
         position: fixed;
         bottom: 80px;
         right: 20px;
+        z-index: 1001;
+    }
+
+    .main-floating-btn {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        border: none;
+        cursor: pointer;
+        transition: var(--transition);
+        position: relative;
+        z-index: 2;
+    }
+
+    .main-floating-btn:hover {
+        transform: translateY(-3px) scale(1.1);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+
+    .main-floating-btn i {
+        font-size: 24px;
+        transition: transform 0.3s ease;
+    }
+
+    .floating-btns {
+        position: absolute;
+        bottom: 70px;
+        right: 0;
         display: flex;
         flex-direction: column;
         gap: 15px;
-        z-index: 1001;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(20px);
+        transition: all 0.3s ease;
+    }
+
+    .floating-btn-container.active .floating-btns {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .floating-btn-container.active .main-floating-btn i {
+        transform: rotate(45deg);
     }
 
     .floating-btn {
@@ -931,8 +978,72 @@
         transform: scale(1.1);
     }
 
-    .dark-mode .customization-panel {
+    /* Sección de Ajustes */
+    .settings-panel {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: var(--shadow);
+        margin-top: 30px;
+    }
+
+    .settings-title {
+        font-size: 22px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+    }
+
+    .settings-title i {
+        margin-right: 10px;
+        color: var(--secondary-color);
+    }
+
+    .setting-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .setting-item:last-child {
+        border-bottom: none;
+    }
+
+    .setting-label {
+        font-weight: 500;
+    }
+
+    .setting-description {
+        font-size: 13px;
+        color: #666;
+        margin-top: 5px;
+    }
+
+    .creator-credit {
+        text-align: center;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+        color: #666;
+        font-size: 13px;
+    }
+
+    .dark-mode .customization-panel,
+    .dark-mode .settings-panel {
         background-color: #1e1e1e;
+    }
+
+    .dark-mode .setting-item {
+        border-bottom-color: #444;
+    }
+
+    .dark-mode .setting-description,
+    .dark-mode .creator-credit {
+        color: #aaa;
     }
 
     /* Mejoras para impresión */
@@ -1031,9 +1142,14 @@
             font-size: 18px;
         }
         
-        .floating-btns {
+        .floating-btn-container {
             bottom: 70px;
             right: 10px;
+        }
+        
+        .main-floating-btn {
+            width: 55px;
+            height: 55px;
         }
         
         .floating-btn {
@@ -1119,154 +1235,470 @@
     .animate-pulse {
         animation: pulse 2s infinite;
     }
+    /* Contenedor principal de ajustes */
+#ajustes-tab {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px;
+    background-color: var(--background-color, #ffffff);
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    font-family: 'Segoe UI', sans-serif;
+    color: var(--text-color, #333);
+}
+
+/* Título principal */
+#ajustes-tab .settings-title {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--primary-color, #0b4237);
+}
+
+/* Secciones internas */
+#ajustes-tab .settings-section {
+    margin-bottom: 40px;
+    border-top: 1px solid #e0e0e0;
+    padding-top: 30px;
+}
+
+/* Título de sección */
+#ajustes-tab .settings-section-title {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--primary-color, #0b4237);
+}
+
+/* Opciones */
+#ajustes-tab .settings-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 15px 20px;
+    background-color: var(--card-bg, #f9f9f9);
+    border-radius: 10px;
+    transition: background 0.3s ease;
+}
+
+#ajustes-tab .settings-option:hover {
+    background-color: var(--card-hover-bg, #f0f0f0);
+}
+
+#ajustes-tab .settings-option-label h4 {
+    margin: 0 0 5px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+#ajustes-tab .settings-option-label p {
+    margin: 0;
+    font-size: 14px;
+    color: #666;
+}
+
+#ajustes-tab .toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+    transition: all 0.3s ease-in-out;
+}
+
+#ajustes-tab .toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+#ajustes-tab .toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #cfd8dc;
+    border-radius: 30px;
+    transition: 0.4s;
+    box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.2);
+}
+
+#ajustes-tab .toggle-slider:before {
+    content: "";
+    position: absolute;
+    height: 22px;
+    width: 22px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    border-radius: 50%;
+    transition: 0.4s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#ajustes-tab .toggle-switch input:checked + .toggle-slider {
+    background-color: var(--accent-color, #0b4237);
+}
+
+#ajustes-tab .toggle-switch input:checked + .toggle-slider:before {
+    transform: translateX(30px);
+}
+
+#ajustes-tab .toggle-switch input:focus + .toggle-slider {
+    box-shadow: 0 0 1px var(--accent-color, #0b4237);
+}
+
+/* Colores */
+#ajustes-tab .color-options {
+    display: flex;
+    gap: 12px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+}
+
+#ajustes-tab .color-option {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border 0.3s ease;
+}
+
+#ajustes-tab .color-option:hover {
+    border-color: #aaa;
+}
+
+#ajustes-tab .color-option.selected {
+    border-color: var(--accent-color, #0b4237);
+}
+
+/* Botón reset */
+#ajustes-tab #resetColors {
+    transition: background 0.3s ease, transform 0.2s;
+}
+
+#ajustes-tab #resetColors:hover {
+    background: var(--primary-color, #0b4237);
+    transform: scale(1.05);
+}
+
+/* Información final */
+#ajustes-tab .app-info {
+    text-align: center;
+    margin-top: 40px;
+    font-size: 14px;
+    color: #888;
+}
+
+#ajustes-tab .app-version {
+    font-weight: bold;
+    color: var(--primary-color, #0b4237);
+}
+
+/* Modo oscuro */
+.dark-mode #ajustes-tab {
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+}
+
+.dark-mode #ajustes-tab .settings-section {
+    border-top-color: #444;
+}
+
+.dark-mode #ajustes-tab .settings-option {
+    background-color: #252525;
+}
+
+.dark-mode #ajustes-tab .settings-option:hover {
+    background-color: #2d2d2d;
+}
+
+.dark-mode #ajustes-tab .settings-option-label p {
+    color: #aaa;
+}
+
+.dark-mode #ajustes-tab .app-info {
+    color: #aaa;
+}
     </style>
 </head>
-<body>
-    <!-- Barra superior -->
-    <div class="top-bar">
-        <div class="container">
-            <a href="#" class="logo">
-                <img src="https://raw.githubusercontent.com/AndresAlvarezmonvsyo/Calcular-notas-unad-by-a.a./refs/heads/main/ChatGPT%20Image%2014%20may%202025%2C%2008_56_05%20p.m..png" alt="Logo UNAD">
-                <div class="logo-text">
-                    <span>Calculadora de Calificaciones</span>
-                    <span>Universidad Nacional Abierta y a Distancia</span>
-                    <span class="student-note">Desarrollado por un estudiante de Ingeniería en Sistemas como complemento a la calculadora UNAD</span>
-                </div>
-            </a>
-            <div class="theme-switch">
-                <span>Modo oscuro</span>
-                <label class="switch">
-                    <input type="checkbox" id="themeToggle">
-                    <span class="slider"></span>
-                </label>
+<body><div class="top-bar">
+    <div class="container">
+        <a href="#" class="logo">
+            <img src="https://raw.githubusercontent.com/AndresAlvarezmonvsyo/Calcular-notas-unad-by-a.a./refs/heads/main/ChatGPT%20Image%2014%20may%202025%2C%2008_56_05%20p.m..png" alt="Logo UNAD">
+            <div class="logo-text">
+                <span>Calculadora de Calificaciones</span>
+                <span>Universidad Nacional Abierta y a Distancia</span>
+                <span class="student-note">Desarrollado por un estudiante de Ingeniería en Sistemas como complemento a la calculadora UNAD</span>
             </div>
+        </a>
+        <div class="theme-switch">
+            <span>Modo oscuro</span>
+            <label class="switch">
+                <input type="checkbox" id="themeToggle">
+                <span class="slider"></span>
+            </label>
         </div>
     </div>
-    
-    <!-- Contenido principal -->
-    <div class="main-content">
-        <div class="container">
-            <!-- Sección de calculadora (activa por defecto) -->
-            <div id="calculadora-tab" class="content-tab active">
-                <div class="calculator-card animate__animated animate__fadeIn">
-                    <div class="card-header">
-                        <h2><i class="fas fa-calculator"></i> Calculadora de Notas</h2>
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <div class="card-body">
-                        <div class="calculator-grid">
-                            <div>
-                                <div class="input-group">
-                                    <label for="p75">Puntos obtenidos (75%)</label>
-                                    <div class="input-wrapper">
-                                        <input type="number" id="p75" value="0" min="0" max="375" step="1" class="puntos-input">
-                                        <span class="max-label">Max 375</span>
-                                    </div>
-                                    <div class="error-message" id="error75">¡El valor máximo es 375 puntos!</div>
-                                    <div class="hand-animation">
-                                        <i class="fas fa-hand-point-down"></i>
-                                    </div>
+</div>
+
+<div class="main-content">
+    <div class="container">
+        <!-- Sección de calculadora -->
+        <div id="calculadora-tab" class="content-tab active">
+            <div class="calculator-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-calculator"></i> Calculadora de Notas</h2>
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="card-body">
+                    <div class="calculator-grid">
+                        <div>
+                            <div class="input-group">
+                                <label for="p75">Puntos obtenidos (75%)</label>
+                                <div class="input-wrapper">
+                                    <input type="number" id="p75" value="0" min="0" max="375" step="1" class="puntos-input">
+                                    <span class="max-label">Max 375</span>
                                 </div>
-                                
-                                <div class="input-group">
-                                    <label for="p25">Puntos obtenidos (25%)</label>
-                                    <div class="input-wrapper">
-                                        <input type="number" id="p25" value="0" min="0" max="125" step="1" class="puntos-input">
-                                        <span class="max-label">Max 125</span>
-                                    </div>
-                                    <div class="error-message" id="error25">¡El valor máximo es 125 puntos!</div>
-                                    <div class="hand-animation" style="animation-delay: 0.5s;">
-                                        <i class="fas fa-hand-point-down"></i>
-                                    </div>
-                                </div>
-                                
-                                <div class="progress-container">
-                                    <div class="progress-info">
-                                        <span>Progreso total</span>
-                                        <span id="progressPercentage">0%</span>
-                                    </div>
-                                    <div class="progress-bar-bg">
-                                        <div class="progress-bar-fill" id="progressBar"></div>
-                                    </div>
+                                <div class="error-message" id="error75">¡El valor máximo es 375 puntos!</div>
+                                <div class="hand-animation">
+                                    <i class="fas fa-hand-point-down"></i>
                                 </div>
                             </div>
                             
-                            <div class="results-container">
-                                <div class="result-item">
-                                    <span class="result-label">Nota 75%:</span>
-                                    <span class="result-value" id="n75">0.0</span>
+                            <div class="input-group">
+                                <label for="p25">Puntos obtenidos (25%)</label>
+                                <div class="input-wrapper">
+                                    <input type="number" id="p25" value="0" min="0" max="125" step="1" class="puntos-input">
+                                    <span class="max-label">Max 125</span>
                                 </div>
-                                <div class="result-item">
-                                    <span class="result-label">Nota 25%:</span>
-                                    <span class="result-value" id="n25">0.0</span>
+                                <div class="error-message" id="error25">¡El valor máximo es 125 puntos!</div>
+                                <div class="hand-animation" style="animation-delay: 0.5s;">
+                                    <i class="fas fa-hand-point-down"></i>
                                 </div>
-                                <div class="result-item">
-                                    <span class="result-label">Total puntos:</span>
-                                    <span class="result-value" id="n100">0</span>
+                            </div>
+                            
+                            <div class="progress-container">
+                                <div class="progress-info">
+                                    <span>Progreso total</span>
+                                    <span id="progressPercentage">0%</span>
                                 </div>
-                                <div class="result-item">
-                                    <span class="result-label">Nota final:</span>
-                                    <span class="result-value" id="tot">-</span>
+                                <div class="progress-bar-bg">
+                                    <div class="progress-bar-fill" id="progressBar"></div>
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="final-grade-container animate__animated animate__fadeInUp">
-                            <h3 class="final-grade-title">TU NOTA FINAL ES</h3>
-                            <div class="final-grade-value" id="finalGrade">0.0</div>
-                            <p class="final-grade-message" id="gradeMessage">Ingresa tus puntos para calcular tu nota final</p>
-                        </div>
-                        
-                        <!-- Gráfico Canvas -->
-                        <div class="chart-container animate__animated animate__fadeIn animate__delay-1s">
-                            <div class="chart-title">
-                                <i class="fas fa-chart-pie"></i> Distribución de tu calificación
+                        <div class="results-container">
+                            <div class="result-item">
+                                <span class="result-label">Nota 75%:</span>
+                                <span class="result-value" id="n75">0.0</span>
                             </div>
-                            <canvas id="gradeChart"></canvas>
+                            <div class="result-item">
+                                <span class="result-label">Nota 25%:</span>
+                                <span class="result-value" id="n25">0.0</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Total puntos:</span>
+                                <span class="result-value" id="n100">0</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Nota final:</span>
+                                <span class="result-value" id="tot">-</span>
+                            </div>
                         </div>
-                        
-                        <!-- Botones de acción -->
-                        <div style="display: flex; justify-content: center; gap: 15px; margin-top: 30px;">
-                            <button id="saveToHistory" style="padding: 12px 25px; background: var(--primary-color); color: white; border: none; border-radius: 8px; cursor: pointer; transition: var(--transition);">
-                                <i class="fas fa-save"></i> Guardar en historial
-                            </button>
-                            <button id="printBtn" style="padding: 12px 25px; background: var(--secondary-color); color: white; border: none; border-radius: 8px; cursor: pointer; transition: var(--transition);">
-                                <i class="fas fa-print"></i> Imprimir resultados
-                            </button>
-                            <button id="exportBtn" style="padding: 12px 25px; background: var(--primary-light); color: white; border: none; border-radius: 8px; cursor: pointer; transition: var(--transition);">
-                                <i class="fas fa-download"></i> Exportar
-                            </button>
+                    </div>
+                    
+                    <div class="final-grade-container">
+                        <h3 class="final-grade-title">TU NOTA FINAL ES</h3>
+                        <div class="final-grade-value" id="finalGrade">0.0</div>
+                        <p class="final-grade-message" id="gradeMessage">Ingresa tus puntos para calcular tu nota final</p>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <div class="chart-title">
+                            <i class="fas fa-chart-pie"></i> Distribución de tu calificación
+                        </div>
+                        <canvas id="gradeChart"></canvas>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: center; gap: 15px; margin-top: 30px;">
+                        <button id="saveToHistory" style="padding: 12px 25px; background: var(--primary-color); color: white; border: none; border-radius: 8px; cursor: pointer;">
+                            <i class="fas fa-save"></i> Guardar en historial
+                        </button>
+                        <button id="printBtn" style="padding: 12px 25px; background: var(--secondary-color); color: white; border: none; border-radius: 8px; cursor: pointer;">
+                            <i class="fas fa-print"></i> Imprimir resultados
+                        </button>
+                        <button id="exportBtn" style="padding: 12px 25px; background: var(--primary-light); color: white; border: none; border-radius: 8px; cursor: pointer;">
+                            <i class="fas fa-download"></i> Exportar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sección de historial -->
+        <div id="historial-tab" class="content-tab history-tab">
+            <div class="history-container">
+                <h2 class="history-title">
+                    <i class="fas fa-history"></i> Historial de Cálculos
+                </h2>
+                <p>Aquí puedes ver, editar y exportar tus cálculos anteriores.</p>
+                
+                <div class="history-list" id="historyList">
+                    <!-- Los elementos del historial se agregarán aquí dinámicamente -->
+                </div>
+                
+                <div class="clear-history">
+                    <button class="clear-history-btn" id="clearHistoryBtn">
+                        <i class="fas fa-trash"></i> Limpiar historial
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sección de información -->
+        <div id="informacion-tab" class="content-tab">
+            <div class="info-container">
+                <h2 class="info-title">
+                    <i class="fas fa-info-circle"></i> Información Importante
+                </h2>
+                <div class="info-content">
+                    <h3>Acerca de esta plataforma</h3>
+                    <p>Esta calculadora fue desarrollada por un estudiante de Ingeniería en Sistemas como un complemento a la calculadora oficial de la UNAD, con el objetivo de brindar una experiencia más completa y accesible para los estudiantes.</p>
+                    
+                    <p>No pretende competir con los sistemas oficiales de la universidad, sino ser un avance hacia el futuro de herramientas educativas más intuitivas y funcionales.</p>
+                    
+                    <h3>Instrucciones de uso</h3>
+                    <p>Esta calculadora te permite determinar tu nota final en un curso de la UNAD basado en el sistema de evaluación que divide la calificación en dos componentes:</p>
+                    
+                    <ul>
+                        <li><strong>75% del curso:</strong> Corresponde a las actividades desarrolladas durante el periodo académico (trabajos, quices, foros, etc.)</li>
+                        <li><strong>25% del curso:</strong> Corresponde al examen final o actividad de cierre del curso</li>
+                    </ul>
+                    
+                    <h3>¿Cómo calcular tu nota?</h3>
+                    <ol>
+                        <li>Ingresa los puntos obtenidos en el componente del 75% (máximo 375 puntos)</li>
+                        <li>Ingresa los puntos obtenidos en el componente del 25% (máximo 125 puntos)</li>
+                        <li>La calculadora mostrará automáticamente tu nota final</li>
+                        <li>Puedes guardar tus resultados en el historial para consultarlos después</li>
+                    </ol>
+                    
+                    <h3>Escala de calificación UNAD</h3>
+                    <p>La Universidad Nacional Abierta y a Distancia utiliza la siguiente escala de calificación:</p>
+                    
+                    <ul>
+                        <li>4.6 - 5.0: Excelente</li>
+                        <li>4.0 - 4.5: Bueno</li>
+                        <li>3.5 - 3.9: Aceptable</li>
+                        <li>3.0 - 3.4: Mínimo aprobatorio</li>
+                        <li>0.0 - 2.9: No aprobado</li>
+                    </ul>
+                    
+                    <h3>Consideraciones importantes</h3>
+                    <p>Recuerda que para aprobar un curso en la UNAD debes:</p>
+                    
+                    <ul>
+                        <li>Obtener una nota final igual o superior a 3.0</li>
+                        <li>Participar en al menos el 80% de las actividades propuestas</li>
+                        <li>Entregar todos los trabajos obligatorios del curso</li>
+                    </ul>
+                    
+                    <p>Esta calculadora es una herramienta de referencia. Las calificaciones oficiales son las publicadas por la universidad en su sistema académico.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sección de guía -->
+        <div id="guia-tab" class="content-tab">
+            <div class="guide-container">
+                <h2 class="guide-title">
+                    <i class="fas fa-hands-helping"></i> Guía Paso a Paso
+                </h2>
+                
+                <div class="guide-steps">
+                    <div class="guide-step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h3 class="step-title">Ingresa tus puntos del 75%</h3>
+                            <p>Escribe en el primer campo los puntos que has obtenido en actividades que valen el 75% de tu nota.</p>
+                            <div class="hand-animation">
+                                <i class="fas fa-hand-point-right"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="guide-step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h3 class="step-title">Ingresa tus puntos del 25%</h3>
+                            <p>Escribe en el segundo campo los puntos obtenidos en actividades que valen el 25% restante.</p>
+                            <div class="hand-animation" style="animation-delay: 0.5s;">
+                                <i class="fas fa-hand-point-right"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="guide-step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h3 class="step-title">Observa tus resultados</h3>
+                            <p>La calculadora mostrará automáticamente tus notas parciales y la nota final del curso.</p>
+                            <div class="hand-animation" style="animation-delay: 1s;">
+                                <i class="fas fa-hand-point-up"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="guide-step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h3 class="step-title">Guarda y exporta</h3>
+                            <p>Guarda tus cálculos en el historial y exporta los resultados como imagen o PDF cuando lo necesites.</p>
+                            <div class="hand-animation" style="animation-delay: 1.5s;">
+                                <i class="fas fa-hand-point-down"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <!-- Sección de historial (ahora independiente) -->
-            <div id="historial-tab" class="content-tab history-tab">
-                <div class="history-container">
-                    <h2 class="history-title">
-                        <i class="fas fa-history"></i> Historial de Cálculos
-                    </h2>
-                    <p>Aquí puedes ver, editar y exportar tus cálculos anteriores.</p>
-                    
-                    <div class="history-list" id="historyList">
-                        <!-- Los elementos del historial se agregarán aquí dinámicamente -->
-                    </div>
-                    
-                    <div class="clear-history">
-                        <button class="clear-history-btn" id="clearHistoryBtn">
-                            <i class="fas fa-trash"></i> Limpiar historial
-                        </button>
-                    </div>
+            <!-- Video tutorial -->
+            <div class="info-container" style="margin-top: 30px;">
+                <h2 class="info-title">
+                    <i class="fas fa-video"></i> Video Tutorial
+                </h2>
+                <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; margin-top: 20px; border-radius: 10px;">
+                    <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;" src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
                 </div>
-                
-                <!-- Panel de personalización -->
-                <div class="customization-panel">
-                    <h2 class="customization-title">
+                <p style="text-align: center; margin-top: 15px;">Aprende a usar todas las funciones de la calculadora con este video tutorial.</p>
+            </div>
+        </div>
+        
+        <!-- Sección de ajustes -->
+        <div id="ajustes-tab" class="content-tab">
+            <div class="settings-container">
+                <h2 class="settings-title">
+                    <i class="fas fa-cog"></i> Ajustes de la Aplicación
+                </h2>
+
+                <!-- Personalización -->
+                <div class="settings-section">
+                    <h3 class="settings-section-title">
                         <i class="fas fa-palette"></i> Personalización
-                    </h2>
+                    </h3>
                     <p>Cambia los colores principales de la aplicación:</p>
-                    
+
                     <div class="color-options">
                         <div class="color-option selected" style="background: #0b4237;" data-color="#0b4237"></div>
                         <div class="color-option" style="background: #2c3e50;" data-color="#2c3e50"></div>
@@ -1275,137 +1707,94 @@
                         <div class="color-option" style="background: #2980b9;" data-color="#2980b9"></div>
                         <div class="color-option" style="background: #c0392b;" data-color="#c0392b"></div>
                     </div>
-                    
+
                     <div style="margin-top: 20px;">
                         <button id="resetColors" style="padding: 8px 15px; background: var(--accent-color); color: white; border: none; border-radius: 5px; cursor: pointer;">
                             <i class="fas fa-undo"></i> Restablecer colores
                         </button>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Sección de información -->
-            <div id="informacion-tab" class="content-tab">
-                <div class="info-container">
-                    <h2 class="info-title">
-                        <i class="fas fa-info-circle"></i> Información Importante
-                    </h2>
-                    <div class="info-content">
-                        <h3>Acerca de esta plataforma</h3>
-                        <p>Esta calculadora fue desarrollada por un estudiante de Ingeniería en Sistemas como un complemento a la calculadora oficial de la UNAD, con el objetivo de brindar una experiencia más completa y accesible para los estudiantes.</p>
-                        
-                        <p>No pretende competir con los sistemas oficiales de la universidad, sino ser un avance hacia el futuro de herramientas educativas más intuitivas y funcionales.</p>
-                        
-                        <h3>Instrucciones de uso</h3>
-                        <p>Esta calculadora te permite determinar tu nota final en un curso de la UNAD basado en el sistema de evaluación que divide la calificación en dos componentes:</p>
-                        
-                        <ul>
-                            <li><strong>75% del curso:</strong> Corresponde a las actividades desarrolladas durante el periodo académico (trabajos, quices, foros, etc.)</li>
-                            <li><strong>25% del curso:</strong> Corresponde al examen final o actividad de cierre del curso</li>
-                        </ul>
-                        
-                        <h3>¿Cómo calcular tu nota?</h3>
-                        <ol>
-                            <li>Ingresa los puntos obtenidos en el componente del 75% (máximo 375 puntos)</li>
-                            <li>Ingresa los puntos obtenidos en el componente del 25% (máximo 125 puntos)</li>
-                            <li>La calculadora mostrará automáticamente tu nota final</li>
-                            <li>Puedes guardar tus resultados en el historial para consultarlos después</li>
-                        </ol>
-                        
-                        <h3>Escala de calificación UNAD</h3>
-                        <p>La Universidad Nacional Abierta y a Distancia utiliza la siguiente escala de calificación:</p>
-                        
-                        <ul>
-                            <li>4.6 - 5.0: Excelente</li>
-                            <li>4.0 - 4.5: Bueno</li>
-                            <li>3.5 - 3.9: Aceptable</li>
-                            <li>3.0 - 3.4: Mínimo aprobatorio</li>
-                            <li>0.0 - 2.9: No aprobado</li>
-                        </ul>
-                        
-                        <h3>Consideraciones importantes</h3>
-                        <p>Recuerda que para aprobar un curso en la UNAD debes:</p>
-                        
-                        <ul>
-                            <li>Obtener una nota final igual o superior a 3.0</li>
-                            <li>Participar en al menos el 80% de las actividades propuestas</li>
-                            <li>Entregar todos los trabajos obligatorios del curso</li>
-                        </ul>
-                        
-                        <p>Esta calculadora es una herramienta de referencia. Las calificaciones oficiales son las publicadas por la universidad en su sistema académico.</p>
+
+                <!-- Configuración de Gráficos -->
+                <div class="settings-section">
+                    <h3 class="settings-section-title">
+                        <i class="fas fa-chart-pie"></i> Configuración de Gráficos
+                    </h3>
+
+                    <div class="settings-option">
+                        <div class="settings-option-label">
+                            <h4>Mostrar gráficos</h4>
+                            <p>Activa o desactiva la visualización de gráficos en la calculadora</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="showChartsToggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Sección de guía (ahora independiente) -->
-            <div id="guia-tab" class="content-tab">
-                <div class="guide-container">
-                    <h2 class="guide-title">
-                        <i class="fas fa-hands-helping"></i> Guía Paso a Paso
-                    </h2>
-                    
-                    <div class="guide-steps">
-                        <div class="guide-step">
-                            <div class="step-number">1</div>
-                            <div class="step-content">
-                                <h3 class="step-title">Ingresa tus puntos del 75%</h3>
-                                <p>Escribe en el primer campo los puntos que has obtenido en actividades que valen el 75% de tu nota.</p>
-                                <div class="hand-animation">
-                                    <i class="fas fa-hand-point-right"></i>
-                                </div>
-                            </div>
+
+                <!-- Configuración de Historial -->
+                <div class="settings-section">
+                    <h3 class="settings-section-title">
+                        <i class="fas fa-save"></i> Configuración de Historial
+                    </h3>
+
+                    <div class="settings-option">
+                        <div class="settings-option-label">
+                            <h4>Guardado automático</h4>
+                            <p>Guarda automáticamente los cálculos en el historial</p>
                         </div>
-                        
-                        <div class="guide-step">
-                            <div class="step-number">2</div>
-                            <div class="step-content">
-                                <h3 class="step-title">Ingresa tus puntos del 25%</h3>
-                                <p>Escribe en el segundo campo los puntos obtenidos en actividades que valen el 25% restante.</p>
-                                <div class="hand-animation" style="animation-delay: 0.5s;">
-                                    <i class="fas fa-hand-point-right"></i>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="guide-step">
-                            <div class="step-number">3</div>
-                            <div class="step-content">
-                                <h3 class="step-title">Observa tus resultados</h3>
-                                <p>La calculadora mostrará automáticamente tus notas parciales y la nota final del curso.</p>
-                                <div class="hand-animation" style="animation-delay: 1s;">
-                                    <i class="fas fa-hand-point-up"></i>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="guide-step">
-                            <div class="step-number">4</div>
-                            <div class="step-content">
-                                <h3 class="step-title">Guarda y exporta</h3>
-                                <p>Guarda tus cálculos en el historial y exporta los resultados como imagen o PDF cuando lo necesites.</p>
-                                <div class="hand-animation" style="animation-delay: 1.5s;">
-                                    <i class="fas fa-hand-point-down"></i>
-                                </div>
-                            </div>
-                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="autoSaveToggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
                     </div>
                 </div>
-                
-                <!-- Video tutorial -->
-                <div class="info-container" style="margin-top: 30px;">
-                    <h2 class="info-title">
-                        <i class="fas fa-video"></i> Video Tutorial
-                    </h2>
-                    <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; margin-top: 20px; border-radius: 10px;">
-                        <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;" src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+
+                <!-- Tema y Animaciones -->
+                <div class="settings-section">
+                    <h3 class="settings-section-title">
+                        <i class="fas fa-adjust"></i> Preferencias Visuales
+                    </h3>
+
+                    <div class="settings-option">
+                        <div class="settings-option-label">
+                            <h4>Modo oscuro automático</h4>
+                            <p>Ajusta el tema según las preferencias de tu sistema</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="autoDarkModeToggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
                     </div>
-                    <p style="text-align: center; margin-top: 15px;">Aprende a usar todas las funciones de la calculadora con este video tutorial.</p>
+
+                    <div class="settings-option">
+                        <div class="settings-option-label">
+                            <h4>Animaciones</h4>
+                            <p>Habilita o deshabilita las animaciones de la aplicación</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="animationsToggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Información de la aplicación -->
+                <div class="app-info">
+                    <div class="app-version">Versión 1.5.7 - Mayo 2025</div>
+                    <div class="app-creator">Powered By Julian Andres Alvarez</div>
                 </div>
             </div>
         </div>
     </div>
-    
-    <!-- Botones flotantes -->
+</div>
+
+<!-- Botones flotantes -->
+<div class="floating-btn-container">
+    <button class="main-floating-btn" id="mainFloatingBtn">
+        <i class="fas fa-plus"></i>
+    </button>
     <div class="floating-btns">
         <button class="floating-btn" id="floatingExportBtn" title="Exportar resultados">
             <i class="fas fa-file-export"></i>
@@ -1417,103 +1806,107 @@
             <i class="fas fa-moon"></i>
         </button>
     </div>
-    
-    <!-- Barra de navegación inferior -->
-    <div class="bottom-nav">
-        <div class="nav-items">
-            <a href="#" class="nav-item active" data-tab="calculadora-tab">
-                <i class="fas fa-calculator"></i>
-                <span>Calculadora</span>
-            </a>
-            <a href="#" class="nav-item" data-tab="historial-tab">
-                <i class="fas fa-history"></i>
-                <span>Historial</span>
-            </a>
-            <a href="#" class="nav-item" data-tab="informacion-tab">
-                <i class="fas fa-info-circle"></i>
-                <span>Información</span>
-            </a>
-            <a href="#" class="nav-item" data-tab="guia-tab">
-                <i class="fas fa-question-circle"></i>
-                <span>Guía</span>
-            </a>
-        </div>
-    </div>
-    
-    <!-- Modal de exportación -->
-    <div class="modal" id="exportModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Exportar resultados</h3>
-                <button class="close-modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p>Selecciona el formato en el que deseas guardar tus resultados:</p>
-                
-                <div class="export-options">
-                    <button class="export-btn" id="exportPng">
-                        <i class="fas fa-file-image"></i>
-                        <span>Imagen (PNG)</span>
-                    </button>
-                    
-                    <button class="export-btn" id="exportPdf">
-                        <i class="fas fa-file-pdf"></i>
-                        <span>Documento (PDF)</span>
-                    </button>
-                    
-                    <button class="export-btn" id="exportJpeg">
-                        <i class="fas fa-file-image"></i>
-                        <span>Imagen (JPEG)</span>
-                    </button>
-                    
-                    <button class="export-btn" id="exportCsv">
-                        <i class="fas fa-file-csv"></i>
-                        <span>Datos (CSV)</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Modal de bienvenida -->
-    <div class="modal welcome-modal" id="welcomeModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>¡Bienvenido a la Calculadora UNAD Premium!</h3>
-                <button class="close-modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="welcome-content">
-                    <div class="welcome-icon">
-                        <i class="fas fa-calculator"></i>
-                    </div>
-                    <h4>Calcula tu nota final fácilmente</h4>
-                    <p>Esta herramienta premium fue desarrollada por un estudiante de Ingeniería en Sistemas como complemento a la calculadora oficial de la UNAD, con el objetivo de brindar una experiencia más completa.</p>
-                    
-                    <div style="text-align: left; margin: 20px 0;">
-                        <h5 style="color: var(--primary-color); margin-bottom: 10px;">Nuevas características:</h5>
-                        <ul>
-                            <li>Historial independiente con más funciones</li>
-                            <li>Personalización de colores</li>
-                            <li>Mejor soporte para impresión en móviles</li>
-                            <li>Exportación a múltiples formatos</li>
-                            <li>Interfaz más intuitiva</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="dont-show-again">
-                        <input type="checkbox" id="dontShowAgain">
-                        <label for="dontShowAgain">No mostrar este mensaje nuevamente</label>
-                    </div>
-                    
-                    <button onclick="closeWelcomeModal()" style="margin-top: 20px; padding: 10px 20px; background: var(--primary-color); color: white; border: none; border-radius: 8px; cursor: pointer;">
-                        Comenzar a usar
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+</div>
 
+<!-- Barra de navegación inferior -->
+<div class="bottom-nav">
+    <div class="nav-items">
+        <a href="#" class="nav-item active" data-tab="calculadora-tab">
+            <i class="fas fa-calculator"></i>
+            <span>Calculadora</span>
+        </a>
+        <a href="#" class="nav-item" data-tab="historial-tab">
+            <i class="fas fa-history"></i>
+            <span>Historial</span>
+        </a>
+        <a href="#" class="nav-item" data-tab="informacion-tab">
+            <i class="fas fa-info-circle"></i>
+            <span>Información</span>
+        </a>
+        <a href="#" class="nav-item" data-tab="guia-tab">
+            <i class="fas fa-question-circle"></i>
+            <span>Guía</span>
+        </a>
+        <a href="#" class="nav-item" data-tab="ajustes-tab">
+            <i class="fas fa-cog"></i>
+            <span>Ajustes</span>
+        </a>
+    </div>
+</div>
+
+<!-- Modal de exportación -->
+<div class="modal" id="exportModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Exportar resultados</h3>
+            <button class="close-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>Selecciona el formato en el que deseas guardar tus resultados:</p>
+            
+            <div class="export-options">
+                <button class="export-btn" id="exportPng">
+                    <i class="fas fa-file-image"></i>
+                    <span>Imagen (PNG)</span>
+                </button>
+                
+                <button class="export-btn" id="exportPdf">
+                    <i class="fas fa-file-pdf"></i>
+                    <span>Documento (PDF)</span>
+                </button>
+                
+                <button class="export-btn" id="exportJpeg">
+                    <i class="fas fa-file-image"></i>
+                    <span>Imagen (JPEG)</span>
+                </button>
+                
+                <button class="export-btn" id="exportCsv">
+                    <i class="fas fa-file-csv"></i>
+                    <span>Datos (CSV)</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de bienvenida -->
+<div class="modal welcome-modal" id="welcomeModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>¡Bienvenido a la Calculadora UNAD Premium!</h3>
+            <button class="close-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="welcome-content">
+                <div class="welcome-icon">
+                    <i class="fas fa-calculator"></i>
+                </div>
+                <h4>Calcula tu nota final fácilmente</h4>
+                <p>Esta herramienta premium fue desarrollada por un estudiante de Ingeniería en Sistemas como complemento a la calculadora oficial de la UNAD, con el objetivo de brindar una experiencia más completa.</p>
+                
+                <div style="text-align: left; margin: 20px 0;">
+                    <h5 style="color: var(--primary-color); margin-bottom: 10px;">Nuevas características:</h5>
+                    <ul>
+                        <li>Historial independiente con más funciones</li>
+                        <li>Personalización de colores</li>
+                        <li>Mejor soporte para impresión en móviles</li>
+                        <li>Exportación a múltiples formatos</li>
+                        <li>Interfaz más intuitiva</li>
+                    </ul>
+                </div>
+                
+                <div class="dont-show-again">
+                    <input type="checkbox" id="dontShowAgain">
+                    <label for="dontShowAgain">No mostrar este mensaje nuevamente</label>
+                </div>
+                
+                <button onclick="closeWelcomeModal()" style="margin-top: 20px; padding: 10px 20px; background: var(--primary-color); color: white; border: none; border-radius: 8px; cursor: pointer;">
+                    Comenzar a usar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -1550,6 +1943,18 @@
     // Event listeners
     $('#themeToggle').change(function() {
         $(this).is(':checked') ? enableDarkMode() : disableDarkMode();
+    });
+    
+    // Toggle para botones flotantes
+    $('#mainFloatingBtn').click(function() {
+        $('.floating-btn-container').toggleClass('active');
+    });
+    
+    // Cerrar botones flotantes al hacer clic fuera
+    $(document).click(function(e) {
+        if (!$(e.target).closest('.floating-btn-container').length) {
+            $('.floating-btn-container').removeClass('active');
+        }
     });
     
     $('#floatingThemeBtn').click(() => $('#themeToggle').click());
@@ -1598,6 +2003,48 @@
         $('.color-option').removeClass('selected');
         $('.color-option:first').addClass('selected');
     });
+    
+    // Configuración de ajustes
+    $('#autoSaveToggle').change(function() {
+        localStorage.setItem('autoSave', $(this).is(':checked'));
+    });
+    
+    $('#showChartsToggle').change(function() {
+        localStorage.setItem('showCharts', $(this).is(':checked'));
+        if (gradeChart) {
+            $('.chart-container').toggle($(this).is(':checked'));
+        }
+    });
+    
+    $('#autoDarkModeToggle').change(function() {
+        localStorage.setItem('autoDarkMode', $(this).is(':checked'));
+        if ($(this).is(':checked') && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            enableDarkMode();
+        }
+    });
+    
+    $('#animationsToggle').change(function() {
+        localStorage.setItem('animations', $(this).is(':checked'));
+        $('body').toggleClass('no-animations', !$(this).is(':checked'));
+    });
+    
+    // Cargar configuraciones guardadas
+    if (localStorage.getItem('autoSave') !== null) {
+        $('#autoSaveToggle').prop('checked', localStorage.getItem('autoSave') === 'true');
+    }
+    
+    if (localStorage.getItem('showCharts') !== null) {
+        $('#showChartsToggle').prop('checked', localStorage.getItem('showCharts') === 'true');
+    }
+    
+    if (localStorage.getItem('autoDarkMode') !== null) {
+        $('#autoDarkModeToggle').prop('checked', localStorage.getItem('autoDarkMode') === 'true');
+    }
+    
+    if (localStorage.getItem('animations') !== null) {
+        $('#animationsToggle').prop('checked', localStorage.getItem('animations') === 'true');
+        $('body').toggleClass('no-animations', localStorage.getItem('animations') === 'false');
+    }
     
     // Nueva función: Calcular nota necesaria
     $('#calculateRequired').click(calculateRequiredGrade);
@@ -2302,7 +2749,9 @@ Calculado el ${new Date().toLocaleDateString()}`;
     
     // Escuchar cambios en el tema del sistema
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-        e.matches ? enableDarkMode() : disableDarkMode();
+        if ($('#autoDarkModeToggle').is(':checked')) {
+            e.matches ? enableDarkMode() : disableDarkMode();
+        }
     });
     
     // Cargar preferencias de color guardadas
